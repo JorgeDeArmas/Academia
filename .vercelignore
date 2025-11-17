@@ -1,0 +1,8 @@
+# Supabase Edge Functions (Deno code, not for Vercel)
+supabase/functions/**
+
+# SQL migration files
+*.sql
+
+# Supabase temp files
+supabase/.temp/**
