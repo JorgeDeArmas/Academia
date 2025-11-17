@@ -1,0 +1,33 @@
+{
+  "name": "Academia - TikTok Shop para Creadores Hispanos",
+  "short_name": "Academia",
+  "description": "Descubre creadores similares, sus videos más exitosos y productos destacados",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#9333ea",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "social"],
+  "lang": "es",
+  "dir": "ltr"
+}
