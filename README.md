@@ -1,246 +1,183 @@
-# Academia - TikTok Shop for Hispanic Creators
+# Supabase CLI
 
-A Next.js 14 + Supabase PWA that helps Hispanic TikTok Shop creators discover similar creators, analyze their top-performing videos, and find featured products that drive sales.
+[![Coverage Status](https://coveralls.io/repos/github/supabase/cli/badge.svg?branch=main)](https://coveralls.io/github/supabase/cli?branch=main) [![Bitbucket Pipelines](https://img.shields.io/bitbucket/pipelines/supabase-cli/setup-cli/master?style=flat-square&label=Bitbucket%20Canary)](https://bitbucket.org/supabase-cli/setup-cli/pipelines) [![Gitlab Pipeline Status](https://img.shields.io/gitlab/pipeline-status/sweatybridge%2Fsetup-cli?label=Gitlab%20Canary)
+](https://gitlab.com/sweatybridge/setup-cli/-/pipelines)
 
-## 🚀 Features
+[Supabase](https://supabase.io) is an open source Firebase alternative. We're building the features of Firebase using enterprise-grade open source tools.
 
-- **TikTok OAuth Authentication** - Secure login with TikTok Login Kit
-- **Similar Creator Discovery** - Find and analyze creators in your niche
-- **Video Analytics** - View engagement metrics and performance data
-- **Product Insights** - Discover which products are selling best
-- **Mobile-First PWA** - Install as an app on any device
-- **Spanish Language** - Built specifically for the Hispanic market
+This repository contains all the functionality for Supabase CLI.
 
-## 🏗️ Tech Stack
+- [x] Running Supabase locally
+- [x] Managing database migrations
+- [x] Creating and deploying Supabase Functions
+- [x] Generating types directly from your database schema
+- [x] Making authenticated HTTP requests to [Management API](https://supabase.com/docs/reference/api/introduction)
 
-- **Framework**: Next.js 14 (App Router)
-- **Database**: Supabase (PostgreSQL)
-- **Styling**: Tailwind CSS
-- **Auth**: TikTok OAuth 2.0
-- **PWA**: next-pwa
-- **Language**: TypeScript
+## Getting started
 
-## 📋 Prerequisites
+### Install the CLI
 
-Before you begin, ensure you have:
-
-- Node.js 18+ installed
-- A Supabase account and project
-- A TikTok Developer account with OAuth credentials
-
-## 🛠️ Installation
-
-1. **Clone the repository**
-
-   ```bash
-   cd /home/pixelab/Academia
-   ```
-
-2. **Install dependencies**
-
-   ```bash
-   npm install
-   ```
-
-3. **Set up environment variables**
-
-   Copy `.env.local.example` to `.env.local`:
-
-   ```bash
-   cp .env.local.example .env.local
-   ```
-
-   Fill in your credentials:
-
-   ```env
-   # Supabase
-   NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
-   SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
-
-   # TikTok OAuth
-   TIKTOK_CLIENT_KEY=your-tiktok-client-key
-   TIKTOK_CLIENT_SECRET=your-tiktok-client-secret
-   NEXT_PUBLIC_TIKTOK_REDIRECT_URI=http://localhost:3000/api/auth/tiktok/callback
-   ```
-
-4. **Set up Supabase database**
-
-   Apply the migrations in order:
-
-   ```bash
-   # Copy and paste the contents of these files into Supabase SQL Editor:
-   # 1. supabase/migrations/001_initial_schema.sql
-   # 2. supabase/migrations/002_seed_data.sql
-   ```
-
-   See `supabase/README.md` for detailed instructions.
-
-5. **Generate PWA icons**
-
-   Follow instructions in `public/ICONS_README.md` to generate icon files.
-
-## 🚀 Running the App
-
-### Development Mode
+Available via [NPM](https://www.npmjs.com) as dev dependency. To install:
 
 ```bash
-npm run dev
+npm i supabase --save-dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-### Production Build
+To install the beta release channel:
 
 ```bash
-npm run build
-npm start
+npm i supabase@beta --save-dev
 ```
 
-## ☁️ Deploying to Vercel
-
-1. **Import the repo** – In the Vercel dashboard click _Add New Project_ → _Import Git Repository_ and select this repository.
-2. **Set environment variables** – In Project Settings → _Environment Variables_, add every key from `.env.local.example`. For production deployments set `NEXT_PUBLIC_TIKTOK_REDIRECT_URI` and `NEXTAUTH_URL` to your final HTTPS domain, e.g. `https://academia.vercel.app`.
-3. **Update TikTok Redirect URI** – In the TikTok Developer Portal add the same HTTPS callback (`https://your-domain.vercel.app/api/auth/tiktok/callback`) to the Redirect URI list so sandbox/production flows accept it.
-4. **Redeploy** – Trigger a deploy from the Vercel dashboard or push to the connected branch. After the first deploy, you can run `npx vercel env pull .env.local` to sync values to your local machine.
-
-Once deployed, tests like OAuth will hit the hosted domain, so remember to refresh the TikTok app settings whenever your Vercel URL changes (custom domain recommended for stability).
-
-## 📁 Project Structure
+When installing with yarn 4, you need to disable experimental fetch with the following nodejs config.
 
 ```
-Academia/
-├── app/                      # Next.js App Router
-│   ├── api/                  # API routes
-│   │   ├── auth/            # Authentication endpoints
-│   │   ├── dashboard/       # Dashboard data API
-│   │   └── onboarding/      # Onboarding API
-│   ├── dashboard/           # Dashboard page
-│   ├── onboarding/          # Onboarding flow
-│   ├── layout.tsx           # Root layout
-│   └── page.tsx             # Landing page
-├── lib/                      # Utilities and services
-│   ├── services/            # Business logic services
-│   │   ├── productScoring.ts
-│   │   └── trendAnalysis.ts
-│   ├── utils/               # Utility functions
-│   │   └── culturalFit.ts
-│   ├── translators/         # Translation adapters
-│   │   └── productAdapter.ts
-│   ├── auth.ts              # Auth helpers
-│   └── supabase.ts          # Supabase client
-├── types/                    # TypeScript types
-│   └── index.ts
-├── supabase/                 # Database migrations
-│   ├── migrations/
-│   └── README.md
-├── public/                   # Static assets
-│   ├── manifest.json        # PWA manifest
-│   └── icon.svg             # App icon
-└── next.config.ts           # Next.js configuration
+NODE_OPTIONS=--no-experimental-fetch yarn add supabase
 ```
 
-## 🗄️ Database Schema
+> **Note**
+For Bun versions below v1.0.17, you must add `supabase` as a [trusted dependency](https://bun.sh/guides/install/trusted) before running `bun add -D supabase`.
 
-### Tables
+<details>
+  <summary><b>macOS</b></summary>
 
-- **users** - TikTok creator profiles
-- **creators_similar** - Similarity relationships between creators
-- **creator_videos** - Video content with engagement metrics
-- **video_products** - Products featured in videos with performance data
+  Available via [Homebrew](https://brew.sh). To install:
 
-See `supabase/migrations/001_initial_schema.sql` for the complete schema.
+  ```sh
+  brew install supabase/tap/supabase
+  ```
 
-## 🔐 Authentication Flow
+  To install the beta release channel:
+  
+  ```sh
+  brew install supabase/tap/supabase-beta
+  brew link --overwrite supabase-beta
+  ```
+  
+  To upgrade:
 
-1. User clicks "Login with TikTok"
-2. Redirected to TikTok OAuth consent screen
-3. After authorization, callback receives auth code
-4. Exchange code for access token
-5. Fetch user profile from TikTok API
-6. Create/update user in Supabase
-7. Set session cookie
-8. Redirect to dashboard or onboarding
+  ```sh
+  brew upgrade supabase
+  ```
+</details>
 
-## 📱 PWA Features
+<details>
+  <summary><b>Windows</b></summary>
 
-- Installable on mobile and desktop
-- Offline-ready with service worker
-- App-like experience
-- Custom splash screen
-- Responsive design
+  Available via [Scoop](https://scoop.sh). To install:
 
-## 🌐 TikTok API Integration
+  ```powershell
+  scoop bucket add supabase https://github.com/supabase/scoop-bucket.git
+  scoop install supabase
+  ```
 
-The app uses TikTok's OAuth 2.0 flow with the following scopes:
+  To upgrade:
 
-- `user.info.basic` - Basic profile information
-- `video.list` - Access to user's video list
+  ```powershell
+  scoop update supabase
+  ```
+</details>
 
-**Note**: For production use with real creator/video/product data, you'll need access to:
+<details>
+  <summary><b>Linux</b></summary>
 
-- TikTok Research API
-- TikTok Content Posting API
-- TikTok for Business API
+  Available via [Homebrew](https://brew.sh) and Linux packages.
 
-## 🔮 Future Enhancements
+  #### via Homebrew
 
-The architecture supports easy extension for:
+  To install:
 
-- **Advanced Analytics** - Trend detection and performance prediction
-- **Product Recommendations** - ML-based product suggestions
-- **Cultural Adaptation** - Enhanced Spanish localization
-- **Collaboration Tools** - Creator networking features
-- **Revenue Tracking** - Sales and commission analytics
+  ```sh
+  brew install supabase/tap/supabase
+  ```
 
-## 📝 Development Notes
+  To upgrade:
 
-### Mock Data
+  ```sh
+  brew upgrade supabase
+  ```
 
-The MVP uses seed data (`002_seed_data.sql`) for demonstration. To use real data:
+  #### via Linux packages
 
-1. Implement TikTok API integrations in `lib/services/`
-2. Create background jobs to fetch and update creator/video data
-3. Implement similarity algorithm in `lib/utils/culturalFit.ts`
+  Linux packages are provided in [Releases](https://github.com/supabase/cli/releases). To install, download the `.apk`/`.deb`/`.rpm`/`.pkg.tar.zst` file depending on your package manager and run the respective commands.
 
-### Environment Considerations
+  ```sh
+  sudo apk add --allow-untrusted <...>.apk
+  ```
 
-- **TikTok Developer Account**: Required for OAuth credentials
-- **API Access**: TikTok API access may require business approval
-- **Rate Limits**: Consider TikTok API rate limits for production
+  ```sh
+  sudo dpkg -i <...>.deb
+  ```
 
-## 🐛 Troubleshooting
+  ```sh
+  sudo rpm -i <...>.rpm
+  ```
 
-### TikTok OAuth Issues
+  ```sh
+  sudo pacman -U <...>.pkg.tar.zst
+  ```
+</details>
 
-- Verify redirect URI matches in TikTok Developer Portal
-- Check that client key/secret are correct
-- Ensure callback URL is accessible
+<details>
+  <summary><b>Other Platforms</b></summary>
 
-### Supabase Connection
+  You can also install the CLI via [go modules](https://go.dev/ref/mod#go-install) without the help of package managers.
 
-- Verify environment variables are set correctly
-- Check Supabase project is active
-- Confirm RLS policies are properly configured
+  ```sh
+  go install github.com/supabase/cli@latest
+  ```
 
-### PWA Not Installing
+  Add a symlink to the binary in `$PATH` for easier access:
 
-- Must be served over HTTPS in production
-- Check manifest.json is accessible at `/manifest.json`
-- Verify service worker is registered
+  ```sh
+  ln -s "$(go env GOPATH)/bin/cli" /usr/bin/supabase
+  ```
 
-## 📄 License
+  This works on other non-standard Linux distros.
+</details>
 
-MIT
+<details>
+  <summary><b>Community Maintained Packages</b></summary>
 
-## 🤝 Contributing
+  Available via [pkgx](https://pkgx.sh/). Package script [here](https://github.com/pkgxdev/pantry/blob/main/projects/supabase.com/cli/package.yml).
+  To install in your working directory:
 
-This is an MVP. Contributions to extend functionality are welcome!
+  ```bash
+  pkgx install supabase
+  ```
 
-## 📞 Support
+  Available via [Nixpkgs](https://nixos.org/). Package script [here](https://github.com/NixOS/nixpkgs/blob/master/pkgs/development/tools/supabase-cli/default.nix).
+</details>
 
-For issues related to:
+### Run the CLI
 
-- TikTok API: See [TikTok Developers](https://developers.tiktok.com/)
-- Supabase: See [Supabase Docs](https://supabase.com/docs)
-- Next.js: See [Next.js Docs](https://nextjs.org/docs)
+```bash
+supabase bootstrap
+```
+
+Or using npx:
+
+```bash
+npx supabase bootstrap
+```
+
+The bootstrap command will guide you through the process of setting up a Supabase project using one of the [starter](https://github.com/supabase-community/supabase-samples/blob/main/samples.json) templates.
+
+## Docs
+
+Command & config reference can be found [here](https://supabase.com/docs/reference/cli/about).
+
+## Breaking changes
+
+We follow semantic versioning for changes that directly impact CLI commands, flags, and configurations.
+
+However, due to dependencies on other service images, we cannot guarantee that schema migrations, seed.sql, and generated types will always work for the same CLI major version. If you need such guarantees, we encourage you to pin a specific version of CLI in package.json.
+
+## Developing
+
+To run from source:
+
+```sh
+# Go >= 1.22
+go run . help
+```
