@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
         const { data: videos } = await supabaseAdmin
           .from("creator_videos")
           .select("*")
-          .eq("creator_id", creator.id)
+          .eq("user_id", creator.id)
           .order("view_count", { ascending: false })
           .limit(3);
 

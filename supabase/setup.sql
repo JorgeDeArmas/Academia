@@ -24,18 +24,19 @@ CREATE TABLE IF NOT EXISTS creators_similar (
 -- Create creator_videos table
 CREATE TABLE IF NOT EXISTS creator_videos (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  creator_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   video_id VARCHAR(255) UNIQUE NOT NULL,
-  title TEXT NOT NULL,
+  title TEXT,
   description TEXT,
-  thumbnail_url TEXT NOT NULL,
+  cover_image_url TEXT,
   video_url TEXT NOT NULL,
+  duration_seconds INTEGER,
   view_count BIGINT DEFAULT 0,
   like_count BIGINT DEFAULT 0,
   comment_count BIGINT DEFAULT 0,
   share_count BIGINT DEFAULT 0,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  posted_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+  posted_at TIMESTAMP WITH TIME ZONE
 );
 
 -- Create video_products table
@@ -57,7 +58,7 @@ CREATE TABLE IF NOT EXISTS video_products (
 CREATE INDEX IF NOT EXISTS idx_users_tiktok_user_id ON users(tiktok_user_id);
 CREATE INDEX IF NOT EXISTS idx_creators_similar_user_id ON creators_similar(user_id);
 CREATE INDEX IF NOT EXISTS idx_creators_similar_similar_creator_id ON creators_similar(similar_creator_id);
-CREATE INDEX IF NOT EXISTS idx_creator_videos_creator_id ON creator_videos(creator_id);
+CREATE INDEX IF NOT EXISTS idx_creator_videos_user_id ON creator_videos(user_id);
 CREATE INDEX IF NOT EXISTS idx_creator_videos_video_id ON creator_videos(video_id);
 CREATE INDEX IF NOT EXISTS idx_video_products_video_id ON video_products(video_id);
 
