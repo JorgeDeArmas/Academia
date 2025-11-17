@@ -29,8 +29,17 @@ export async function GET(request: NextRequest) {
   }
 
   try {
+    // Use sandbox endpoints for developer testing
+    const isSandbox = process.env.TIKTOK_SANDBOX === 'true';
+    const tokenEndpoint = isSandbox
+      ? 'https://sandbox-open.tiktokapis.com/v2/oauth/token/'
+      : 'https://open.tiktokapis.com/v2/oauth/token/';
+    const userInfoEndpoint = isSandbox
+      ? 'https://sandbox-open.tiktokapis.com/v2/user/info/'
+      : 'https://open.tiktokapis.com/v2/user/info/';
+    
     // Exchange authorization code for access token
-    const tokenResponse = await fetch('https://open.tiktokapis.com/v2/oauth/token/', {
+    const tokenResponse = await fetch(tokenEndpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -53,7 +62,7 @@ export async function GET(request: NextRequest) {
     const accessToken = tokenData.access_token;
 
     // Fetch user info from TikTok
-    const userResponse = await fetch('https://open.tiktokapis.com/v2/user/info/', {
+    const userResponse = await fetch(userInfoEndpoint, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${accessToken}`,
