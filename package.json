@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint --ext .ts,.tsx,.js,.jsx ."
+    "lint": "eslint --ext .ts,.tsx,.js,.jsx .",
+    "validate:tiktok": "tsx scripts/validate-tiktok-config.ts",
+    "seed:creator": "tsx scripts/seed-sample-creator.ts"
   },
   "keywords": [
     "tiktok",

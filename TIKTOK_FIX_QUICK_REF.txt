@@ -1,0 +1,67 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                    TIKTOK OAUTH FIX - QUICK REFERENCE                        ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+📋 YOUR ERROR:
+   error=unauthorized_client&error_type=client_key
+   
+   ⚠️  This means: Your ngrok redirect URI is NOT whitelisted in TikTok app
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔧 FIX IN 3 STEPS:
+
+   1. Open TikTok Developer Portal:
+      → https://developers.tiktok.com/apps/
+      
+   2. Select app: sbawd3rp... (your client key)
+      
+   3. In "Login Kit" → "Redirect domain" section, add BOTH:
+      
+      ✓ Full callback URI:
+        https://subsocial-justice-detersively.ngrok-free.dev/api/auth/tiktok/callback
+        
+      ✓ Domain only:
+        subsocial-justice-detersively.ngrok-free.dev
+        
+   4. Click SAVE and wait 5-10 minutes
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ VERIFICATION CHECKLIST:
+
+   □ Redirect URIs added to TikTok app settings?
+   □ App status is "Live" or "Sandbox" (not "Draft")?
+   □ Waited 5-10 minutes after saving?
+   □ If sandbox: Your TikTok account added as test user?
+   □ Dev server restarted: npm run dev
+   □ Browser cache/cookies cleared?
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💡 PRO TIPS:
+
+   • ngrok URL changes on restart → Get free static domain at ngrok.com
+   • Redirect URI must match EXACTLY (trailing slash, protocol, etc.)
+   • For production, also add: academia-blond-chi.vercel.app
+   • Run validation anytime: ./scripts/validate-tiktok.sh
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📚 DOCUMENTATION:
+
+   • Full guide: TIKTOK_OAUTH_SETUP.md
+   • TikTok docs: https://developers.tiktok.com/doc/login-kit-web
+   • Static ngrok: https://ngrok.com/docs/agent/config/#connect-token
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🆘 STILL NOT WORKING?
+
+   1. Check exact error in browser URL bar after redirect
+   2. Look at server logs: vercel logs (if on Vercel)
+   3. Verify TikTok account is whitelisted (for sandbox apps)
+   4. Try adding trailing slash to redirect URI: /callback/
+   5. Double-check client_key in TikTok portal matches .env.local
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

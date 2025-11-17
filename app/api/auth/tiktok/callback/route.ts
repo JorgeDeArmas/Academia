@@ -1,27 +1,73 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 
+/**
+ * Get the base URL for redirects based on the request.
+ * This ensures that:
+ * - In production (Vercel): uses the actual domain (academia-blond-chi.vercel.app)
+ * - In development with ngrok: uses the ngrok URL to avoid localhost SSL issues
+ * - In local development: uses localhost
+ */
+function getBaseUrl(request: NextRequest): string {
+  // First, try to get the host from the request URL itself
+  // This is the most reliable as it's where the callback was actually called
+  const requestUrl = new URL(request.url);
+  const host = requestUrl.host;
+
+  // Check if we're being called through a proxy/tunnel (ngrok, etc.)
+  // by looking at x-forwarded-host or host headers
+  const forwardedHost = request.headers.get("x-forwarded-host");
+  const hostHeader = request.headers.get("host");
+
+  // Determine the correct host
+  const actualHost = forwardedHost || hostHeader || host;
+
+  // Determine protocol - use https for production/ngrok, http for localhost
+  const isLocalhost =
+    actualHost.includes("localhost") || actualHost.includes("127.0.0.1");
+  const protocol = isLocalhost ? "http" : "https";
+
+  return `${protocol}://${actualHost}`;
+}
+
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const code = searchParams.get("code");
   const state = searchParams.get("state");
   const error = searchParams.get("error");
+  const errorType = searchParams.get("error_type");
+  const errorDescription = searchParams.get("error_description");
+
+  // Get base URL for consistent redirects across environments
+  const baseUrl = getBaseUrl(request);
 
   // Check for OAuth errors
   if (error) {
-    return NextResponse.redirect(
-      new URL(`/?error=${encodeURIComponent(error)}`, request.url)
-    );
+    console.error("TikTok OAuth error:", {
+      error,
+      errorType,
+      errorDescription,
+      url: request.url,
+    });
+
+    // Build error URL with all error details
+    const errorUrl = new URL("/", baseUrl);
+    errorUrl.searchParams.set("error", error);
+    if (errorType) errorUrl.searchParams.set("error_type", errorType);
+    if (errorDescription)
+      errorUrl.searchParams.set("error_description", errorDescription);
+
+    return NextResponse.redirect(errorUrl);
   }
 
   // Verify CSRF state
   const csrfState = request.cookies.get("tiktok_csrf_state")?.value;
   if (!state || state !== csrfState) {
-    return NextResponse.redirect(new URL("/?error=invalid_state", request.url));
+    return NextResponse.redirect(new URL("/?error=invalid_state", baseUrl));
   }
 
   if (!code) {
-    return NextResponse.redirect(new URL("/?error=no_code", request.url));
+    return NextResponse.redirect(new URL("/?error=no_code", baseUrl));
   }
 
   try {
@@ -281,9 +327,14 @@ export async function GET(request: NextRequest) {
     }
 
     // Create session
+    // Get the base URL to ensure redirects work correctly in all environments
+    const baseUrl = getBaseUrl(request);
+    const dashboardUrl = `${baseUrl}/dashboard`;
+    const onboardingUrl = `${baseUrl}/onboarding`;
+
     const response = existingUser
-      ? NextResponse.redirect(new URL("/dashboard", request.url))
-      : NextResponse.redirect(new URL("/onboarding", request.url));
+      ? NextResponse.redirect(dashboardUrl)
+      : NextResponse.redirect(onboardingUrl);
 
     // Set session cookie
     response.cookies.set(
@@ -307,6 +358,7 @@ export async function GET(request: NextRequest) {
     return response;
   } catch (error) {
     console.error("TikTok OAuth error:", error);
-    return NextResponse.redirect(new URL("/?error=oauth_failed", request.url));
+    const baseUrl = getBaseUrl(request);
+    return NextResponse.redirect(new URL("/?error=oauth_failed", baseUrl));
   }
 }
