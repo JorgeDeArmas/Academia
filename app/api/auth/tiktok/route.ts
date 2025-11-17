@@ -18,7 +18,8 @@ export async function GET(request: NextRequest) {
   // https://developers.tiktok.com/doc/login-kit-web
   const authUrl = new URL("https://www.tiktok.com/v2/auth/authorize/");
   authUrl.searchParams.append("client_key", clientKey);
-  authUrl.searchParams.append("scope", "user.info.basic,video.list");
+  // Use comma-separated scope format without spaces as per TikTok docs
+  authUrl.searchParams.append("scope", "user.info.basic");
   authUrl.searchParams.append("response_type", "code");
   authUrl.searchParams.append("redirect_uri", redirectUri);
   authUrl.searchParams.append("state", csrfState);
