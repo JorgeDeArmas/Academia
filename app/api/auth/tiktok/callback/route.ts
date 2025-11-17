@@ -46,12 +46,23 @@ export async function GET(request: NextRequest) {
       }),
     });
 
+    const tokenData = await tokenResponse.json();
+    
     if (!tokenResponse.ok) {
-      throw new Error("Failed to exchange token");
+      console.error("Token exchange failed:", tokenData);
+      return NextResponse.redirect(
+        new URL(`/?error=token_failed&details=${encodeURIComponent(JSON.stringify(tokenData))}`, request.url)
+      );
     }
 
-    const tokenData = await tokenResponse.json();
     const accessToken = tokenData.access_token;
+    
+    if (!accessToken) {
+      console.error("No access token in response:", tokenData);
+      return NextResponse.redirect(
+        new URL("/?error=no_access_token", request.url)
+      );
+    }
 
     // Fetch user info from TikTok
     const userResponse = await fetch(userInfoEndpoint, {
@@ -62,25 +73,44 @@ export async function GET(request: NextRequest) {
       },
     });
 
+    const userData = await userResponse.json();
+    
     if (!userResponse.ok) {
-      throw new Error("Failed to fetch user info");
+      console.error("User info fetch failed:", userData);
+      return NextResponse.redirect(
+        new URL(`/?error=user_info_failed&details=${encodeURIComponent(JSON.stringify(userData))}`, request.url)
+      );
     }
 
-    const userData = await userResponse.json();
-    const tiktokUser = userData.data.user;
+    const tiktokUser = userData.data?.user;
+    
+    if (!tiktokUser) {
+      console.error("No user data in response:", userData);
+      return NextResponse.redirect(
+        new URL("/?error=no_user_data", request.url)
+      );
+    }
 
     // Check if user exists in database
-    const { data: existingUser } = await supabaseAdmin
+    const { data: existingUser, error: selectError } = await supabaseAdmin
       .from("users")
       .select("*")
       .eq("tiktok_user_id", tiktokUser.open_id)
       .single();
 
+    if (selectError && selectError.code !== "PGRST116") {
+      // PGRST116 is "not found" which is expected for new users
+      console.error("Database select error:", selectError);
+      return NextResponse.redirect(
+        new URL(`/?error=db_error&details=${encodeURIComponent(selectError.message)}`, request.url)
+      );
+    }
+
     let userId: string;
 
     if (existingUser) {
       // Update existing user
-      const { data: updatedUser } = await supabaseAdmin
+      const { data: updatedUser, error: updateError } = await supabaseAdmin
         .from("users")
         .update({
           display_name: tiktokUser.display_name,
@@ -92,10 +122,17 @@ export async function GET(request: NextRequest) {
         .select()
         .single();
 
+      if (updateError || !updatedUser) {
+        console.error("Database update error:", updateError);
+        return NextResponse.redirect(
+          new URL(`/?error=db_update_failed&details=${encodeURIComponent(updateError?.message || "unknown")}`, request.url)
+        );
+      }
+
       userId = updatedUser.id;
     } else {
       // Create new user
-      const { data: newUser } = await supabaseAdmin
+      const { data: newUser, error: insertError } = await supabaseAdmin
         .from("users")
         .insert({
           tiktok_user_id: tiktokUser.open_id,
@@ -106,6 +143,13 @@ export async function GET(request: NextRequest) {
         })
         .select()
         .single();
+
+      if (insertError || !newUser) {
+        console.error("Database insert error:", insertError);
+        return NextResponse.redirect(
+          new URL(`/?error=db_insert_failed&details=${encodeURIComponent(insertError?.message || "unknown")}`, request.url)
+        );
+      }
 
       userId = newUser.id;
     }
