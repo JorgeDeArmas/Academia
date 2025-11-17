@@ -65,7 +65,11 @@ export async function GET(request: NextRequest) {
     }
 
     // Fetch user info from TikTok
-    const userResponse = await fetch(userInfoEndpoint, {
+    // TikTok API requires 'fields' parameter to specify which fields to return
+    const userInfoUrl = new URL(userInfoEndpoint);
+    userInfoUrl.searchParams.append('fields', 'open_id,union_id,avatar_url,display_name,username');
+    
+    const userResponse = await fetch(userInfoUrl.toString(), {
       method: "GET",
       headers: {
         Authorization: `Bearer ${accessToken}`,
