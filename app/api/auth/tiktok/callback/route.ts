@@ -66,8 +66,9 @@ export async function GET(request: NextRequest) {
 
     // Fetch user info from TikTok
     // TikTok API requires 'fields' parameter to specify which fields to return
+    // For sandbox apps, only request fields that are definitely available
     const userInfoUrl = new URL(userInfoEndpoint);
-    userInfoUrl.searchParams.append('fields', 'open_id,union_id,avatar_url,display_name,username');
+    userInfoUrl.searchParams.append('fields', 'open_id,display_name');
     
     const userResponse = await fetch(userInfoUrl.toString(), {
       method: "GET",
@@ -117,9 +118,9 @@ export async function GET(request: NextRequest) {
       const { data: updatedUser, error: updateError } = await supabaseAdmin
         .from("users")
         .update({
-          display_name: tiktokUser.display_name,
-          username: tiktokUser.username,
-          avatar_url: tiktokUser.avatar_url,
+          display_name: tiktokUser.display_name || existingUser.display_name,
+          username: tiktokUser.username || existingUser.username,
+          avatar_url: tiktokUser.avatar_url || existingUser.avatar_url,
           updated_at: new Date().toISOString(),
         })
         .eq("tiktok_user_id", tiktokUser.open_id)
@@ -135,14 +136,14 @@ export async function GET(request: NextRequest) {
 
       userId = updatedUser.id;
     } else {
-      // Create new user
+      // Create new user - use available fields, fallback to defaults
       const { data: newUser, error: insertError } = await supabaseAdmin
         .from("users")
         .insert({
           tiktok_user_id: tiktokUser.open_id,
-          display_name: tiktokUser.display_name,
-          username: tiktokUser.username,
-          avatar_url: tiktokUser.avatar_url,
+          display_name: tiktokUser.display_name || "TikTok User",
+          username: tiktokUser.username || `user_${tiktokUser.open_id.substring(0, 8)}`,
+          avatar_url: tiktokUser.avatar_url || null,
           language_preference: "es",
         })
         .select()
