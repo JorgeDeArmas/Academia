@@ -14,14 +14,9 @@ export async function GET(request: NextRequest) {
   // Generate CSRF token for security
   const csrfState = Math.random().toString(36).substring(2);
   
-  // Use sandbox URL for developer testing
-  const isSandbox = process.env.TIKTOK_SANDBOX === 'true';
-  const baseAuthUrl = isSandbox 
-    ? 'https://sandbox-www.tiktok.com/v2/auth/authorize'
-    : 'https://www.tiktok.com/v2/auth/authorize';
-  
-  // TikTok OAuth authorization URL
-  const authUrl = new URL(baseAuthUrl);
+  // TikTok OAuth authorization URL (same for sandbox and production)
+  // Note: Sandbox apps use same endpoints but with sandbox credentials
+  const authUrl = new URL('https://www.tiktok.com/v2/auth/authorize');
   authUrl.searchParams.append('client_key', clientKey);
   authUrl.searchParams.append('scope', 'user.info.basic,video.list');
   authUrl.searchParams.append('response_type', 'code');

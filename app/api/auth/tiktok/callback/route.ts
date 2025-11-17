@@ -29,14 +29,10 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // Use sandbox endpoints for developer testing
-    const isSandbox = process.env.TIKTOK_SANDBOX === 'true';
-    const tokenEndpoint = isSandbox
-      ? 'https://sandbox-open.tiktokapis.com/v2/oauth/token/'
-      : 'https://open.tiktokapis.com/v2/oauth/token/';
-    const userInfoEndpoint = isSandbox
-      ? 'https://sandbox-open.tiktokapis.com/v2/user/info/'
-      : 'https://open.tiktokapis.com/v2/user/info/';
+    // TikTok uses same endpoints for sandbox and production
+    // Sandbox is determined by the app credentials, not the endpoint URL
+    const tokenEndpoint = 'https://open.tiktokapis.com/v2/oauth/token/';
+    const userInfoEndpoint = 'https://open.tiktokapis.com/v2/user/info/';
     
     // Exchange authorization code for access token
     const tokenResponse = await fetch(tokenEndpoint, {
