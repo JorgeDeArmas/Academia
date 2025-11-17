@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(request: NextRequest) {
   // This endpoint helps debug OAuth configuration issues
   // DO NOT expose in production - remove or protect this endpoint
-  
+
   const config = {
     hasClientKey: !!process.env.TIKTOK_CLIENT_KEY,
     hasClientSecret: !!process.env.TIKTOK_CLIENT_SECRET,

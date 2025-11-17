@@ -47,16 +47,21 @@ export async function GET(request: NextRequest) {
     });
 
     const tokenData = await tokenResponse.json();
-    
+
     if (!tokenResponse.ok) {
       console.error("Token exchange failed:", tokenData);
       return NextResponse.redirect(
-        new URL(`/?error=token_failed&details=${encodeURIComponent(JSON.stringify(tokenData))}`, request.url)
+        new URL(
+          `/?error=token_failed&details=${encodeURIComponent(
+            JSON.stringify(tokenData)
+          )}`,
+          request.url
+        )
       );
     }
 
     const accessToken = tokenData.access_token;
-    
+
     if (!accessToken) {
       console.error("No access token in response:", tokenData);
       return NextResponse.redirect(
@@ -66,10 +71,10 @@ export async function GET(request: NextRequest) {
 
     // Fetch user info from TikTok
     // TikTok API requires 'fields' parameter to specify which fields to return
-    // For sandbox apps, only request fields that are definitely available
+    // Request additional fields for profile avatar and bio
     const userInfoUrl = new URL(userInfoEndpoint);
-    userInfoUrl.searchParams.append('fields', 'open_id,display_name');
-    
+    userInfoUrl.searchParams.append("fields", "open_id,display_name,avatar_url,avatar_large_url,username,bio_description,profile_deep_link");
+
     const userResponse = await fetch(userInfoUrl.toString(), {
       method: "GET",
       headers: {
@@ -79,16 +84,21 @@ export async function GET(request: NextRequest) {
     });
 
     const userData = await userResponse.json();
-    
+
     if (!userResponse.ok) {
       console.error("User info fetch failed:", userData);
       return NextResponse.redirect(
-        new URL(`/?error=user_info_failed&details=${encodeURIComponent(JSON.stringify(userData))}`, request.url)
+        new URL(
+          `/?error=user_info_failed&details=${encodeURIComponent(
+            JSON.stringify(userData)
+          )}`,
+          request.url
+        )
       );
     }
 
     const tiktokUser = userData.data?.user;
-    
+
     if (!tiktokUser) {
       console.error("No user data in response:", userData);
       return NextResponse.redirect(
@@ -107,7 +117,10 @@ export async function GET(request: NextRequest) {
       // PGRST116 is "not found" which is expected for new users
       console.error("Database select error:", selectError);
       return NextResponse.redirect(
-        new URL(`/?error=db_error&details=${encodeURIComponent(selectError.message)}`, request.url)
+        new URL(
+          `/?error=db_error&details=${encodeURIComponent(selectError.message)}`,
+          request.url
+        )
       );
     }
 
@@ -120,7 +133,7 @@ export async function GET(request: NextRequest) {
         .update({
           display_name: tiktokUser.display_name || existingUser.display_name,
           username: tiktokUser.username || existingUser.username,
-          avatar_url: tiktokUser.avatar_url || existingUser.avatar_url,
+          avatar_url: tiktokUser.avatar_url || tiktokUser.avatar_large_url || existingUser.avatar_url,
           updated_at: new Date().toISOString(),
         })
         .eq("tiktok_user_id", tiktokUser.open_id)
@@ -130,7 +143,12 @@ export async function GET(request: NextRequest) {
       if (updateError || !updatedUser) {
         console.error("Database update error:", updateError);
         return NextResponse.redirect(
-          new URL(`/?error=db_update_failed&details=${encodeURIComponent(updateError?.message || "unknown")}`, request.url)
+          new URL(
+            `/?error=db_update_failed&details=${encodeURIComponent(
+              updateError?.message || "unknown"
+            )}`,
+            request.url
+          )
         );
       }
 
@@ -142,8 +160,9 @@ export async function GET(request: NextRequest) {
         .insert({
           tiktok_user_id: tiktokUser.open_id,
           display_name: tiktokUser.display_name || "TikTok User",
-          username: tiktokUser.username || `user_${tiktokUser.open_id.substring(0, 8)}`,
-          avatar_url: tiktokUser.avatar_url || null,
+          username:
+            tiktokUser.username || `user_${tiktokUser.open_id.substring(0, 8)}`,
+          avatar_url: tiktokUser.avatar_url || tiktokUser.avatar_large_url || null,
           language_preference: "es",
         })
         .select()
@@ -152,11 +171,78 @@ export async function GET(request: NextRequest) {
       if (insertError || !newUser) {
         console.error("Database insert error:", insertError);
         return NextResponse.redirect(
-          new URL(`/?error=db_insert_failed&details=${encodeURIComponent(insertError?.message || "unknown")}`, request.url)
+          new URL(
+            `/?error=db_insert_failed&details=${encodeURIComponent(
+              insertError?.message || "unknown"
+            )}`,
+            request.url
+          )
         );
       }
 
       userId = newUser.id;
+    }
+
+    // Fetch user's videos from TikTok
+    // Only fetch if we have video.list scope
+    try {
+      const videoListUrl = new URL("https://open.tiktokapis.com/v2/video/list/");
+      videoListUrl.searchParams.append("fields", "id,create_time,cover_image_url,share_url,video_description,duration,height,width,title,embed_html,embed_link,like_count,comment_count,share_count,view_count");
+      
+      const videoResponse = await fetch(videoListUrl.toString(), {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          max_count: 20, // Fetch up to 20 videos
+        }),
+      });
+
+      if (videoResponse.ok) {
+        const videoData = await videoResponse.json();
+        const videos = videoData.data?.videos || [];
+
+        // Store videos in database
+        if (videos.length > 0) {
+          const videoRecords = videos.map((video: any) => ({
+            user_id: userId,
+            video_id: video.id,
+            video_url: video.share_url || video.embed_link,
+            cover_image_url: video.cover_image_url,
+            title: video.title || video.video_description || null,
+            description: video.video_description || null,
+            duration_seconds: video.duration || null,
+            view_count: video.view_count || 0,
+            like_count: video.like_count || 0,
+            comment_count: video.comment_count || 0,
+            share_count: video.share_count || 0,
+            created_at: video.create_time ? new Date(video.create_time * 1000).toISOString() : new Date().toISOString(),
+          }));
+
+          // Upsert videos (insert or update if exists)
+          const { error: videoInsertError } = await supabaseAdmin
+            .from("creator_videos")
+            .upsert(videoRecords, {
+              onConflict: "video_id",
+              ignoreDuplicates: false,
+            });
+
+          if (videoInsertError) {
+            console.error("Error storing videos:", videoInsertError);
+            // Don't fail the OAuth flow if video storage fails
+          } else {
+            console.log(`Successfully stored ${videos.length} videos for user ${userId}`);
+          }
+        }
+      } else {
+        console.error("Video list fetch failed:", await videoResponse.text());
+        // Don't fail the OAuth flow if video fetch fails
+      }
+    } catch (videoError) {
+      console.error("Error fetching videos:", videoError);
+      // Don't fail the OAuth flow if video fetch fails
     }
 
     // Create session
