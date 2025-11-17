@@ -1,34 +1,36 @@
-'use client';
+"use client";
 
-import { useCallback, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-import { SimilarCreatorWithDetails, VideoWithProducts } from '@/types';
-import { formatCurrency } from '@/lib/translators/productAdapter';
-import { calculateEngagementScore } from '@/lib/utils/culturalFit';
+import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { SimilarCreatorWithDetails, VideoWithProducts } from "@/types";
+import { formatCurrency } from "@/lib/translators/productAdapter";
+import { calculateEngagementScore } from "@/lib/utils/culturalFit";
 
 export default function DashboardPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
-  const [similarCreators, setSimilarCreators] = useState<SimilarCreatorWithDetails[]>([]);
+  const [similarCreators, setSimilarCreators] = useState<
+    SimilarCreatorWithDetails[]
+  >([]);
   const [expandedCreator, setExpandedCreator] = useState<string | null>(null);
 
   const fetchDashboardData = useCallback(async () => {
     try {
-      const response = await fetch('/api/dashboard');
+      const response = await fetch("/api/dashboard");
       if (!response.ok) {
         if (response.status === 401) {
-          router.push('/');
+          router.push("/");
           return;
         }
-        throw new Error('Failed to fetch dashboard data');
+        throw new Error("Failed to fetch dashboard data");
       }
       const data = await response.json();
       setUser(data.user);
       setSimilarCreators(data.similarCreators);
     } catch (error) {
-      console.error('Error fetching dashboard data:', error);
+      console.error("Error fetching dashboard data:", error);
     } finally {
       setLoading(false);
     }
@@ -39,8 +41,8 @@ export default function DashboardPage() {
   }, [fetchDashboardData]);
 
   const handleLogout = async () => {
-    await fetch('/api/auth/logout', { method: 'POST' });
-    router.push('/');
+    await fetch("/api/auth/logout", { method: "POST" });
+    router.push("/");
   };
 
   const toggleCreator = (creatorId: string) => {
@@ -49,10 +51,10 @@ export default function DashboardPage() {
 
   const formatNumber = (num: number): string => {
     if (num >= 1000000) {
-      return (num / 1000000).toFixed(1) + 'M';
+      return (num / 1000000).toFixed(1) + "M";
     }
     if (num >= 1000) {
-      return (num / 1000).toFixed(1) + 'K';
+      return (num / 1000).toFixed(1) + "K";
     }
     return num.toString();
   };
@@ -88,8 +90,12 @@ export default function DashboardPage() {
                     />
                   )}
                   <div>
-                    <p className="font-semibold text-gray-900">{user.display_name}</p>
-                    <p className="text-sm text-gray-500">{user.creator_category}</p>
+                    <p className="font-semibold text-gray-900">
+                      {user.display_name}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      {user.creator_category}
+                    </p>
                   </div>
                 </div>
               )}
@@ -111,7 +117,8 @@ export default function DashboardPage() {
             Creadores Similares a Ti
           </h2>
           <p className="text-gray-600">
-            Descubre qué están haciendo creadores en tu nicho y aprende de su éxito
+            Descubre qué están haciendo creadores en tu nicho y aprende de su
+            éxito
           </p>
         </div>
 
@@ -122,8 +129,8 @@ export default function DashboardPage() {
               No encontramos creadores similares aún
             </h3>
             <p className="text-gray-600 max-w-md mx-auto">
-              Estamos analizando la plataforma para encontrar los mejores matches para ti.
-              Vuelve pronto para ver tus recomendaciones.
+              Estamos analizando la plataforma para encontrar los mejores
+              matches para ti. Vuelve pronto para ver tus recomendaciones.
             </p>
           </div>
         ) : (
@@ -166,7 +173,7 @@ export default function DashboardPage() {
                     </div>
                     <svg
                       className={`w-6 h-6 text-gray-400 transition-transform ${
-                        expandedCreator === creator.id ? 'rotate-180' : ''
+                        expandedCreator === creator.id ? "rotate-180" : ""
                       }`}
                       fill="none"
                       stroke="currentColor"
@@ -215,10 +222,10 @@ function VideoCard({ video }: { video: any }) {
 
   const formatNumber = (num: number): string => {
     if (num >= 1000000) {
-      return (num / 1000000).toFixed(1) + 'M';
+      return (num / 1000000).toFixed(1) + "M";
     }
     if (num >= 1000) {
-      return (num / 1000).toFixed(1) + 'K';
+      return (num / 1000).toFixed(1) + "K";
     }
     return num.toString();
   };
@@ -279,7 +286,12 @@ function VideoCard({ video }: { video: any }) {
               onClick={() => setShowProducts(!showProducts)}
               className="w-full text-sm text-purple-600 hover:text-purple-700 font-medium border-t border-gray-200 pt-3 flex items-center justify-center gap-2"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -287,7 +299,8 @@ function VideoCard({ video }: { video: any }) {
                   d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
                 />
               </svg>
-              {showProducts ? 'Ocultar' : 'Ver'} Productos ({video.products.length})
+              {showProducts ? "Ocultar" : "Ver"} Productos (
+              {video.products.length})
             </button>
 
             {showProducts && (

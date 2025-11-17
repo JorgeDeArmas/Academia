@@ -10,12 +10,14 @@ This directory contains SQL migrations for the Academia database schema.
 ## How to Apply Migrations
 
 ### Option 1: Using Supabase Dashboard
+
 1. Go to your Supabase project dashboard
 2. Navigate to SQL Editor
 3. Copy and paste the contents of each migration file
 4. Execute them in order
 
 ### Option 2: Using Supabase CLI
+
 ```bash
 # Install Supabase CLI
 npm install -g supabase
@@ -42,6 +44,7 @@ supabase db push
 ### Row Level Security
 
 All tables have RLS enabled with policies to ensure:
+
 - Users can only access their own data
 - Users can view similar creators and their content
 - Products are accessible based on video visibility

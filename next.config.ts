@@ -7,16 +7,16 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'p16-sign-sg.tiktokcdn.com',
+        protocol: "https",
+        hostname: "p16-sign-sg.tiktokcdn.com",
       },
       {
-        protocol: 'https',
-        hostname: 'p16-sign.tiktokcdn-us.com',
+        protocol: "https",
+        hostname: "p16-sign.tiktokcdn-us.com",
       },
       {
-        protocol: 'https',
-        hostname: 'via.placeholder.com',
+        protocol: "https",
+        hostname: "via.placeholder.com",
       },
     ],
   },

@@ -9,7 +9,8 @@ const jakarta = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   title: "Academia - TikTok Shop para Creadores Hispanos",
-  description: "Descubre creadores similares, sus videos más exitosos y productos destacados",
+  description:
+    "Descubre creadores similares, sus videos más exitosos y productos destacados",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
@@ -32,7 +33,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body className={`${jakarta.className} bg-surface-light text-slate-900 antialiased`}>
+      <body
+        className={`${jakarta.className} bg-surface-light text-slate-900 antialiased`}
+      >
         {children}
       </body>
     </html>

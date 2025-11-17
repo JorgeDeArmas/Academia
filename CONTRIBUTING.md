@@ -17,6 +17,7 @@ Academia aims to empower Hispanic TikTok Shop creators by providing data-driven 
 See [SETUP.md](./SETUP.md) for detailed setup instructions.
 
 Quick start:
+
 ```bash
 npm install
 cp .env.local.example .env.local
@@ -101,6 +102,7 @@ chore: update dependencies
 ### Manual Testing
 
 Test these flows:
+
 1. Landing page loads
 2. TikTok OAuth works
 3. Onboarding flow completes
@@ -111,12 +113,14 @@ Test these flows:
 ## 🎨 Code Style
 
 ### TypeScript
+
 - Use TypeScript for all new files
 - Avoid `any` types
 - Export interfaces from `types/`
 - Use meaningful variable names
 
 ### React Components
+
 ```typescript
 // Good
 export default function CreatorCard({ creator }: { creator: User }) {
@@ -131,29 +135,28 @@ export default function Card(props: any) {
 ```
 
 ### CSS/Tailwind
+
 - Use Tailwind utility classes
 - Mobile-first responsive design
 - Consistent spacing (4px grid)
 - Use theme colors
 
 ### API Routes
+
 ```typescript
 export async function GET(request: NextRequest) {
   try {
     // Verify authentication
     const session = getSession(request);
-    
+
     // Fetch data
     const data = await fetchData();
-    
+
     // Return response
     return NextResponse.json(data);
   } catch (error) {
-    console.error('Error:', error);
-    return NextResponse.json(
-      { error: 'Message' },
-      { status: 500 }
-    );
+    console.error("Error:", error);
+    return NextResponse.json({ error: "Message" }, { status: 500 });
   }
 }
 ```
@@ -198,6 +201,7 @@ All user-facing text should be in Spanish. For future i18n:
 ### Reporting Bugs
 
 Include:
+
 - Description of the bug
 - Steps to reproduce
 - Expected behavior
@@ -236,11 +240,13 @@ Include:
 ### High Priority
 
 1. **TikTok API Integration**
+
    - Implement real data fetching
    - Content Posting API
    - Research API for analytics
 
 2. **Similarity Algorithm**
+
    - ML-based creator matching
    - Category analysis
    - Engagement pattern matching
@@ -253,11 +259,13 @@ Include:
 ### Medium Priority
 
 4. **Product Recommendations**
+
    - ML-based suggestions
    - Cultural fit scoring
    - Price optimization
 
 5. **Multi-language Support**
+
    - English translation
    - Portuguese (Brazilian)
    - Translation infrastructure
@@ -270,6 +278,7 @@ Include:
 ### Low Priority
 
 7. **Advanced Features**
+
    - Creator collaboration tools
    - Content calendar
    - Export reports
@@ -310,6 +319,7 @@ PRs will be merged when:
 ## 🏆 Recognition
 
 Contributors will be:
+
 - Listed in README.md
 - Credited in release notes
 - Mentioned in project updates

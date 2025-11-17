@@ -11,7 +11,10 @@ export function calculateCulturalFit(creator: any): number {
  * Match creators based on category and audience demographics
  * Future implementation: use ML model for similarity matching
  */
-export function findSimilarCreators(userId: string, limit: number = 10): string[] {
+export function findSimilarCreators(
+  userId: string,
+  limit: number = 10
+): string[] {
   // Placeholder implementation
   return [];
 }

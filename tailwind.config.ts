@@ -30,7 +30,8 @@ const config: Config = {
         brand: "0 20px 45px -20px rgba(124, 58, 237, 0.35)",
       },
       backgroundImage: {
-        "hero-gradient": "radial-gradient(circle at 20% 20%, rgba(244, 114, 182, 0.25), transparent 45%), radial-gradient(circle at 80% 0%, rgba(124, 58, 237, 0.25), transparent 40%)",
+        "hero-gradient":
+          "radial-gradient(circle at 20% 20%, rgba(244, 114, 182, 0.25), transparent 45%), radial-gradient(circle at 80% 0%, rgba(124, 58, 237, 0.25), transparent 40%)",
       },
     },
   },

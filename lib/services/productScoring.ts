@@ -7,7 +7,7 @@ export function calculateProductScore(
   conversionRate: number,
   price: number
 ): number {
-  const score = (salesCount * 0.5) + (conversionRate * 100 * 0.3) + (price * 0.2);
+  const score = salesCount * 0.5 + conversionRate * 100 * 0.3 + price * 0.2;
   return Math.round(score * 100) / 100;
 }
 

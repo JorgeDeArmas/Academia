@@ -1,71 +1,71 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 const CATEGORIES = [
-  '🎨 Moda y Belleza',
-  '💻 Tecnología',
-  '🍳 Cocina y Recetas',
-  '💪 Fitness y Salud',
-  '🎮 Gaming',
-  '🎵 Música',
-  '✈️ Viajes',
-  '🏠 Hogar y Decoración',
-  '👶 Maternidad y Familia',
-  '📚 Educación',
-  '💼 Negocios',
-  '🎭 Entretenimiento',
+  "🎨 Moda y Belleza",
+  "💻 Tecnología",
+  "🍳 Cocina y Recetas",
+  "💪 Fitness y Salud",
+  "🎮 Gaming",
+  "🎵 Música",
+  "✈️ Viajes",
+  "🏠 Hogar y Decoración",
+  "👶 Maternidad y Familia",
+  "📚 Educación",
+  "💼 Negocios",
+  "🎭 Entretenimiento",
 ];
 
 export default function OnboardingPage() {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
-    displayName: '',
-    category: '',
+    displayName: "",
+    category: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const handleNext = () => {
     if (step === 1 && !formData.displayName.trim()) {
-      setError('Por favor ingresa tu nombre');
+      setError("Por favor ingresa tu nombre");
       return;
     }
-    setError('');
+    setError("");
     setStep(2);
   };
 
   const handleSubmit = async () => {
     if (!formData.category) {
-      setError('Por favor selecciona una categoría');
+      setError("Por favor selecciona una categoría");
       return;
     }
 
     setIsSubmitting(true);
-    setError('');
+    setError("");
 
     try {
-      const response = await fetch('/api/onboarding', {
-        method: 'POST',
+      const response = await fetch("/api/onboarding", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           displayName: formData.displayName,
           category: formData.category,
-          languagePreference: 'es',
+          languagePreference: "es",
         }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to save onboarding data');
+        throw new Error("Failed to save onboarding data");
       }
 
-      router.push('/dashboard');
+      router.push("/dashboard");
     } catch (err) {
-      setError('Hubo un error. Por favor intenta de nuevo.');
+      setError("Hubo un error. Por favor intenta de nuevo.");
       setIsSubmitting(false);
     }
   };
@@ -80,13 +80,13 @@ export default function OnboardingPage() {
               Paso {step} de 2
             </span>
             <span className="text-sm font-medium text-purple-600">
-              {step === 1 ? '50%' : '100%'}
+              {step === 1 ? "50%" : "100%"}
             </span>
           </div>
           <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
             <div
               className="h-full bg-gradient-to-r from-pink-500 to-purple-600 transition-all duration-300"
-              style={{ width: step === 1 ? '50%' : '100%' }}
+              style={{ width: step === 1 ? "50%" : "100%" }}
             />
           </div>
         </div>
@@ -176,8 +176,8 @@ export default function OnboardingPage() {
                   onClick={() => setFormData({ ...formData, category })}
                   className={`p-4 rounded-lg border-2 transition-all text-left ${
                     formData.category === category
-                      ? 'border-purple-500 bg-purple-50'
-                      : 'border-gray-200 hover:border-purple-300'
+                      ? "border-purple-500 bg-purple-50"
+                      : "border-gray-200 hover:border-purple-300"
                   }`}
                 >
                   <span className="font-medium text-sm">{category}</span>
@@ -196,7 +196,7 @@ export default function OnboardingPage() {
               disabled={isSubmitting}
               className="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white py-3 px-6 rounded-lg font-semibold hover:shadow-lg transition-shadow disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? 'Guardando...' : 'Completar Perfil'}
+              {isSubmitting ? "Guardando..." : "Completar Perfil"}
             </button>
           </div>
         )}

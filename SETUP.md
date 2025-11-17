@@ -6,6 +6,7 @@
 
 1. Go to [supabase.com](https://supabase.com) and create a new project
 2. Once created, go to **Settings** → **API** and copy:
+
    - `URL` (Project URL)
    - `anon public` key
    - `service_role` key
@@ -87,22 +88,26 @@ You can explore the dashboard without needing real TikTok API data.
 ## 🔧 Troubleshooting
 
 ### "Cannot find module" errors
+
 ```bash
 rm -rf node_modules package-lock.json
 npm install
 ```
 
 ### Supabase connection issues
+
 - Check your environment variables are correct
 - Verify Supabase project is active
 - Check network/firewall settings
 
 ### TikTok OAuth not working
+
 - Verify redirect URI matches exactly in TikTok Developer Portal
 - Check client key/secret are correct
 - Ensure you're using HTTP (not HTTPS) for localhost
 
 ### PWA not installing
+
 - PWA only installs in production or when served over HTTPS
 - For testing PWA locally, use `npm run build && npm start`
 
@@ -132,6 +137,7 @@ Add environment variables in Vercel dashboard.
 ### Other Platforms
 
 The app is a standard Next.js app and can be deployed to:
+
 - Netlify
 - AWS Amplify
 - Railway

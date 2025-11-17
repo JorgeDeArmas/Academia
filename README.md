@@ -31,23 +31,27 @@ Before you begin, ensure you have:
 ## 🛠️ Installation
 
 1. **Clone the repository**
+
    ```bash
    cd /home/pixelab/Academia
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    ```
 
 3. **Set up environment variables**
-   
+
    Copy `.env.local.example` to `.env.local`:
+
    ```bash
    cp .env.local.example .env.local
    ```
-   
+
    Fill in your credentials:
+
    ```env
    # Supabase
    NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
@@ -61,23 +65,25 @@ Before you begin, ensure you have:
    ```
 
 4. **Set up Supabase database**
-   
+
    Apply the migrations in order:
+
    ```bash
    # Copy and paste the contents of these files into Supabase SQL Editor:
    # 1. supabase/migrations/001_initial_schema.sql
    # 2. supabase/migrations/002_seed_data.sql
    ```
-   
+
    See `supabase/README.md` for detailed instructions.
 
 5. **Generate PWA icons**
-   
+
    Follow instructions in `public/ICONS_README.md` to generate icon files.
 
 ## 🚀 Running the App
 
 ### Development Mode
+
 ```bash
 npm run dev
 ```
@@ -85,6 +91,7 @@ npm run dev
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ### Production Build
+
 ```bash
 npm run build
 npm start
@@ -92,8 +99,8 @@ npm start
 
 ## ☁️ Deploying to Vercel
 
-1. **Import the repo** – In the Vercel dashboard click *Add New Project* → *Import Git Repository* and select this repository.
-2. **Set environment variables** – In Project Settings → *Environment Variables*, add every key from `.env.local.example`. For production deployments set `NEXT_PUBLIC_TIKTOK_REDIRECT_URI` and `NEXTAUTH_URL` to your final HTTPS domain, e.g. `https://academia.vercel.app`.
+1. **Import the repo** – In the Vercel dashboard click _Add New Project_ → _Import Git Repository_ and select this repository.
+2. **Set environment variables** – In Project Settings → _Environment Variables_, add every key from `.env.local.example`. For production deployments set `NEXT_PUBLIC_TIKTOK_REDIRECT_URI` and `NEXTAUTH_URL` to your final HTTPS domain, e.g. `https://academia.vercel.app`.
 3. **Update TikTok Redirect URI** – In the TikTok Developer Portal add the same HTTPS callback (`https://your-domain.vercel.app/api/auth/tiktok/callback`) to the Redirect URI list so sandbox/production flows accept it.
 4. **Redeploy** – Trigger a deploy from the Vercel dashboard or push to the connected branch. After the first deploy, you can run `npx vercel env pull .env.local` to sync values to your local machine.
 
@@ -166,10 +173,12 @@ See `supabase/migrations/001_initial_schema.sql` for the complete schema.
 ## 🌐 TikTok API Integration
 
 The app uses TikTok's OAuth 2.0 flow with the following scopes:
+
 - `user.info.basic` - Basic profile information
 - `video.list` - Access to user's video list
 
 **Note**: For production use with real creator/video/product data, you'll need access to:
+
 - TikTok Research API
 - TikTok Content Posting API
 - TikTok for Business API
@@ -203,16 +212,19 @@ The MVP uses seed data (`002_seed_data.sql`) for demonstration. To use real data
 ## 🐛 Troubleshooting
 
 ### TikTok OAuth Issues
+
 - Verify redirect URI matches in TikTok Developer Portal
 - Check that client key/secret are correct
 - Ensure callback URL is accessible
 
 ### Supabase Connection
+
 - Verify environment variables are set correctly
 - Check Supabase project is active
 - Confirm RLS policies are properly configured
 
 ### PWA Not Installing
+
 - Must be served over HTTPS in production
 - Check manifest.json is accessible at `/manifest.json`
 - Verify service worker is registered
@@ -228,6 +240,7 @@ This is an MVP. Contributions to extend functionality are welcome!
 ## 📞 Support
 
 For issues related to:
+
 - TikTok API: See [TikTok Developers](https://developers.tiktok.com/)
 - Supabase: See [Supabase Docs](https://supabase.com/docs)
 - Next.js: See [Next.js Docs](https://nextjs.org/docs)

@@ -19,9 +19,12 @@ export function adaptForHispanicMarket(description: string): string {
 /**
  * Format currency for Hispanic markets
  */
-export function formatCurrency(amount: number, currency: string = 'USD'): string {
-  return new Intl.NumberFormat('es-US', {
-    style: 'currency',
+export function formatCurrency(
+  amount: number,
+  currency: string = "USD"
+): string {
+  return new Intl.NumberFormat("es-US", {
+    style: "currency",
     currency: currency,
   }).format(amount);
 }

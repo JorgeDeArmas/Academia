@@ -11,6 +11,7 @@ Academia can be deployed to various platforms. This guide covers the most popula
 Vercel is the easiest deployment option for Next.js apps.
 
 ### Prerequisites
+
 - GitHub account
 - Vercel account (free tier available)
 - Environment variables ready
@@ -18,6 +19,7 @@ Vercel is the easiest deployment option for Next.js apps.
 ### Steps
 
 1. **Push to GitHub**
+
    ```bash
    git init
    git add .
@@ -27,8 +29,9 @@ Vercel is the easiest deployment option for Next.js apps.
    ```
 
 2. **Deploy to Vercel**
-   
+
    Option A - Using Vercel Dashboard:
+
    - Go to [vercel.com](https://vercel.com)
    - Click "New Project"
    - Import your GitHub repository
@@ -37,6 +40,7 @@ Vercel is the easiest deployment option for Next.js apps.
    - Click "Deploy"
 
    Option B - Using Vercel CLI:
+
    ```bash
    npm i -g vercel
    vercel login
@@ -44,8 +48,9 @@ Vercel is the easiest deployment option for Next.js apps.
    ```
 
 3. **Configure Environment Variables**
-   
+
    In Vercel Dashboard → Settings → Environment Variables, add:
+
    ```
    NEXT_PUBLIC_SUPABASE_URL
    NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -58,6 +63,7 @@ Vercel is the easiest deployment option for Next.js apps.
    ```
 
 4. **Update TikTok OAuth Settings**
+
    - Go to TikTok Developer Portal
    - Update redirect URI to: `https://your-app.vercel.app/api/auth/tiktok/callback`
 
@@ -73,21 +79,25 @@ Vercel is the easiest deployment option for Next.js apps.
 ### Steps
 
 1. **Install Netlify CLI**
+
    ```bash
    npm install -g netlify-cli
    ```
 
 2. **Build the app**
+
    ```bash
    npm run build
    ```
 
 3. **Deploy**
+
    ```bash
    netlify deploy --prod
    ```
 
 4. **Configure Environment Variables**
+
    - Netlify Dashboard → Site Settings → Environment Variables
    - Add all required environment variables
 
@@ -105,10 +115,12 @@ Vercel is the easiest deployment option for Next.js apps.
 ### Steps
 
 1. **Connect to GitHub**
+
    - AWS Amplify Console
    - Connect your repository
 
 2. **Configure Build Settings**
+
    ```yaml
    version: 1
    frontend:
@@ -122,7 +134,7 @@ Vercel is the easiest deployment option for Next.js apps.
      artifacts:
        baseDirectory: .next
        files:
-         - '**/*'
+         - "**/*"
      cache:
        paths:
          - node_modules/**/*
@@ -139,6 +151,7 @@ Vercel is the easiest deployment option for Next.js apps.
 ### Dockerfile
 
 Create `Dockerfile`:
+
 ```dockerfile
 FROM node:18-alpine AS builder
 
@@ -184,8 +197,9 @@ docker run -p 3000:3000 \
 ### Docker Compose
 
 Create `docker-compose.yml`:
+
 ```yaml
-version: '3.8'
+version: "3.8"
 
 services:
   app:
@@ -198,6 +212,7 @@ services:
 ```
 
 Run with:
+
 ```bash
 docker-compose up -d
 ```
@@ -209,17 +224,20 @@ docker-compose up -d
 ### Steps
 
 1. **Install Railway CLI**
+
    ```bash
    npm i -g @railway/cli
    ```
 
 2. **Login and Initialize**
+
    ```bash
    railway login
    railway init
    ```
 
 3. **Add Environment Variables**
+
    ```bash
    railway variables set NEXT_PUBLIC_SUPABASE_URL=your-url
    # ... add other variables
@@ -237,14 +255,17 @@ docker-compose up -d
 ### Steps
 
 1. **Create App**
+
    - DigitalOcean Dashboard → Apps → Create App
    - Connect GitHub repository
 
 2. **Configure Build**
+
    - Build Command: `npm run build`
    - Run Command: `npm start`
 
 3. **Add Environment Variables**
+
    - App Settings → Environment Variables
    - Add all required variables
 
@@ -289,6 +310,7 @@ Never commit `.env.local` to git. Use platform-specific environment variable man
 ### Next.js Security Headers
 
 Add to `next.config.ts`:
+
 ```typescript
 async headers() {
   return [
@@ -331,8 +353,9 @@ npm install @vercel/analytics
 ```
 
 Add to `app/layout.tsx`:
+
 ```typescript
-import { Analytics } from '@vercel/analytics/react';
+import { Analytics } from "@vercel/analytics/react";
 
 export default function RootLayout({ children }) {
   return (
@@ -353,6 +376,7 @@ export default function RootLayout({ children }) {
 ### GitHub Actions
 
 Create `.github/workflows/deploy.yml`:
+
 ```yaml
 name: Deploy
 
@@ -367,7 +391,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
-          node-version: '18'
+          node-version: "18"
       - run: npm ci
       - run: npm run build
       - run: npm test # if you have tests
@@ -380,6 +404,7 @@ jobs:
 ### Build Errors
 
 **Issue**: Module not found errors
+
 ```bash
 rm -rf node_modules .next
 npm install
@@ -387,17 +412,20 @@ npm run build
 ```
 
 **Issue**: TypeScript errors
+
 - Check `tsconfig.json` is present
 - Verify all type definitions are installed
 
 ### Runtime Errors
 
 **Issue**: Environment variables not working
+
 - Verify they're prefixed with `NEXT_PUBLIC_` for client-side
 - Check they're set in deployment platform
 - Restart the application after adding variables
 
 **Issue**: TikTok OAuth fails
+
 - Verify redirect URI matches exactly
 - Check client credentials are correct
 - Ensure callback route is accessible
@@ -405,6 +433,7 @@ npm run build
 ### Database Issues
 
 **Issue**: Supabase connection fails
+
 - Check Supabase project is active
 - Verify connection strings are correct
 - Check RLS policies aren't blocking access
@@ -431,18 +460,21 @@ npm run build
 ## 💰 Cost Estimates
 
 ### Free Tier (MVP)
+
 - Vercel: Free (Hobby plan)
 - Supabase: Free (up to 500MB database)
 - TikTok API: Free
 - **Total**: $0/month
 
 ### Production (1,000 users)
+
 - Vercel: $20/month (Pro plan)
 - Supabase: $25/month (Pro plan)
 - CDN: $5/month
 - **Total**: ~$50/month
 
 ### Scale (10,000+ users)
+
 - Vercel: $20-50/month
 - Supabase: $50-100/month
 - CDN: $20/month

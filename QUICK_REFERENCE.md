@@ -56,16 +56,16 @@ NEXTAUTH_URL=
 
 ## 🛣️ Routes
 
-| Route | Description | Protected |
-|-------|-------------|-----------|
-| `/` | Landing page | No |
-| `/onboarding` | New user setup | Yes |
-| `/dashboard` | Analytics dashboard | Yes |
-| `/api/auth/tiktok` | OAuth start | No |
-| `/api/auth/tiktok/callback` | OAuth callback | No |
-| `/api/auth/logout` | Logout | No |
-| `/api/onboarding` | Save onboarding | Yes |
-| `/api/dashboard` | Fetch analytics | Yes |
+| Route                       | Description         | Protected |
+| --------------------------- | ------------------- | --------- |
+| `/`                         | Landing page        | No        |
+| `/onboarding`               | New user setup      | Yes       |
+| `/dashboard`                | Analytics dashboard | Yes       |
+| `/api/auth/tiktok`          | OAuth start         | No        |
+| `/api/auth/tiktok/callback` | OAuth callback      | No        |
+| `/api/auth/logout`          | Logout              | No        |
+| `/api/onboarding`           | Save onboarding     | Yes       |
+| `/api/dashboard`            | Fetch analytics     | Yes       |
 
 ## 💾 Database Tables
 
@@ -79,6 +79,7 @@ video_products      # Product data
 ## 🎨 Key Components
 
 ### Landing Page
+
 ```typescript
 // app/page.tsx
 - Hero section
@@ -89,6 +90,7 @@ video_products      # Product data
 ```
 
 ### Dashboard
+
 ```typescript
 // app/dashboard/page.tsx
 - User profile
@@ -98,6 +100,7 @@ video_products      # Product data
 ```
 
 ### Onboarding
+
 ```typescript
 // app/onboarding/page.tsx
 - Step 1: Name input
@@ -125,6 +128,7 @@ POST /api/auth/logout → Clear cookie
 ## 🎨 Styling
 
 ### Tailwind Classes
+
 ```typescript
 // Gradient
 bg-gradient-to-r from-pink-500 to-purple-600
@@ -137,6 +141,7 @@ px-8 py-4 rounded-full font-semibold
 ```
 
 ### Colors
+
 - Primary: Purple (`purple-600`)
 - Secondary: Pink (`pink-500`)
 - Text: Gray (`gray-900`, `gray-600`)
@@ -155,46 +160,47 @@ xl:  1280px  /* Extra large */
 
 ```typescript
 // lib/utils/culturalFit.ts
-calculateEngagementScore(views, likes, comments, shares)
-calculateCulturalFit(creator)
-findSimilarCreators(userId, limit)
+calculateEngagementScore(views, likes, comments, shares);
+calculateCulturalFit(creator);
+findSimilarCreators(userId, limit);
 
 // lib/translators/productAdapter.ts
-formatCurrency(amount, currency)
-translateToSpanish(text)
-adaptForHispanicMarket(description)
+formatCurrency(amount, currency);
+translateToSpanish(text);
+adaptForHispanicMarket(description);
 
 // lib/services/productScoring.ts
-calculateProductScore(sales, conversion, price)
-rankProducts(products)
+calculateProductScore(sales, conversion, price);
+rankProducts(products);
 ```
 
 ## 🗄️ Database Queries
 
 ```typescript
 // Get user
-supabase.from('users').select('*').eq('id', userId).single()
+supabase.from("users").select("*").eq("id", userId).single();
 
 // Get similar creators
-supabase.from('creators_similar')
-  .select('similar_creator_id, similarity_score')
-  .eq('user_id', userId)
+supabase
+  .from("creators_similar")
+  .select("similar_creator_id, similarity_score")
+  .eq("user_id", userId);
 
 // Get videos
-supabase.from('creator_videos')
-  .select('*')
-  .eq('creator_id', creatorId)
-  .order('view_count', { ascending: false })
+supabase
+  .from("creator_videos")
+  .select("*")
+  .eq("creator_id", creatorId)
+  .order("view_count", { ascending: false });
 
 // Get products
-supabase.from('video_products')
-  .select('*')
-  .eq('video_id', videoId)
+supabase.from("video_products").select("*").eq("video_id", videoId);
 ```
 
 ## 🐛 Common Issues
 
 ### Build Error
+
 ```bash
 rm -rf .next node_modules
 npm install
@@ -202,18 +208,21 @@ npm run build
 ```
 
 ### Environment Variables Not Loading
+
 ```bash
 # Make sure file is named .env.local
 # Restart dev server after changes
 ```
 
 ### TikTok OAuth Failed
+
 ```bash
 # Check redirect URI matches exactly
 # Verify client key/secret are correct
 ```
 
 ### Supabase Connection Error
+
 ```bash
 # Verify environment variables
 # Check Supabase project is active
@@ -286,38 +295,41 @@ http://localhost:3000
 ## 📝 Code Snippets
 
 ### Add New API Route
+
 ```typescript
 // app/api/yourroute/route.ts
-import { NextRequest, NextResponse } from 'next/server';
-import { getSession } from '@/lib/auth';
+import { NextRequest, NextResponse } from "next/server";
+import { getSession } from "@/lib/auth";
 
 export async function GET(request: NextRequest) {
   const session = getSession(request);
   if (!session) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  
+
   // Your logic here
-  return NextResponse.json({ data: 'success' });
+  return NextResponse.json({ data: "success" });
 }
 ```
 
 ### Query Supabase
+
 ```typescript
-import { supabase } from '@/lib/supabase';
+import { supabase } from "@/lib/supabase";
 
 const { data, error } = await supabase
-  .from('your_table')
-  .select('*')
-  .eq('column', 'value')
+  .from("your_table")
+  .select("*")
+  .eq("column", "value")
   .single();
 ```
 
 ### Format Currency
-```typescript
-import { formatCurrency } from '@/lib/translators/productAdapter';
 
-const price = formatCurrency(29.99, 'USD'); // "$29.99"
+```typescript
+import { formatCurrency } from "@/lib/translators/productAdapter";
+
+const price = formatCurrency(29.99, "USD"); // "$29.99"
 ```
 
 ---

@@ -1,34 +1,34 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   const clientKey = process.env.TIKTOK_CLIENT_KEY;
   const redirectUri = process.env.NEXT_PUBLIC_TIKTOK_REDIRECT_URI;
-  
+
   if (!clientKey || !redirectUri) {
     return NextResponse.json(
-      { error: 'TikTok OAuth not configured' },
+      { error: "TikTok OAuth not configured" },
       { status: 500 }
     );
   }
 
   // Generate CSRF token for security
   const csrfState = Math.random().toString(36).substring(2);
-  
+
   // TikTok OAuth authorization URL - MUST include trailing slash per docs
   // https://developers.tiktok.com/doc/login-kit-web
-  const authUrl = new URL('https://www.tiktok.com/v2/auth/authorize/');
-  authUrl.searchParams.append('client_key', clientKey);
-  authUrl.searchParams.append('scope', 'user.info.basic,video.list');
-  authUrl.searchParams.append('response_type', 'code');
-  authUrl.searchParams.append('redirect_uri', redirectUri);
-  authUrl.searchParams.append('state', csrfState);
+  const authUrl = new URL("https://www.tiktok.com/v2/auth/authorize/");
+  authUrl.searchParams.append("client_key", clientKey);
+  authUrl.searchParams.append("scope", "user.info.basic,video.list");
+  authUrl.searchParams.append("response_type", "code");
+  authUrl.searchParams.append("redirect_uri", redirectUri);
+  authUrl.searchParams.append("state", csrfState);
 
   // Store CSRF state in cookie for verification
   const response = NextResponse.redirect(authUrl.toString());
-  response.cookies.set('tiktok_csrf_state', csrfState, {
+  response.cookies.set("tiktok_csrf_state", csrfState, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
     maxAge: 600, // 10 minutes
   });
 
