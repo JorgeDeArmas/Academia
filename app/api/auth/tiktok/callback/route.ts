@@ -106,6 +106,11 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Log what TikTok actually returned
+    console.log("TikTok user data received:", JSON.stringify(tiktokUser, null, 2));
+    console.log("Avatar URL:", tiktokUser.avatar_url);
+    console.log("Avatar Large URL:", tiktokUser.avatar_large_url);
+
     // Check if user exists in database
     const { data: existingUser, error: selectError } = await supabaseAdmin
       .from("users")
@@ -155,16 +160,20 @@ export async function GET(request: NextRequest) {
       userId = updatedUser.id;
     } else {
       // Create new user - use available fields, fallback to defaults
+      const userDataToInsert = {
+        tiktok_user_id: tiktokUser.open_id,
+        display_name: tiktokUser.display_name || "TikTok User",
+        username:
+          tiktokUser.username || `user_${tiktokUser.open_id.substring(0, 8)}`,
+        avatar_url: tiktokUser.avatar_url || tiktokUser.avatar_large_url || null,
+        language_preference: "es",
+      };
+      
+      console.log("Inserting user with data:", JSON.stringify(userDataToInsert, null, 2));
+      
       const { data: newUser, error: insertError } = await supabaseAdmin
         .from("users")
-        .insert({
-          tiktok_user_id: tiktokUser.open_id,
-          display_name: tiktokUser.display_name || "TikTok User",
-          username:
-            tiktokUser.username || `user_${tiktokUser.open_id.substring(0, 8)}`,
-          avatar_url: tiktokUser.avatar_url || tiktokUser.avatar_large_url || null,
-          language_preference: "es",
-        })
+        .insert(userDataToInsert)
         .select()
         .single();
 
@@ -181,6 +190,7 @@ export async function GET(request: NextRequest) {
       }
 
       userId = newUser.id;
+      console.log("Successfully created user:", JSON.stringify(newUser, null, 2));
     }
 
     // Fetch user's videos from TikTok

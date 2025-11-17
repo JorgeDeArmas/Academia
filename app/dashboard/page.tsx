@@ -80,14 +80,22 @@ export default function DashboardPage() {
               <h1 className="text-2xl font-bold text-purple-600">Academia</h1>
               {user && (
                 <div className="flex items-center gap-3">
-                  {user.avatar_url && (
-                    <Image
+                  {user.avatar_url ? (
+                    <img
                       src={user.avatar_url}
                       alt={user.display_name}
-                      width={40}
-                      height={40}
-                      className="rounded-full"
+                      className="w-10 h-10 rounded-full object-cover"
+                      onError={(e) => {
+                        // Hide image on error
+                        e.currentTarget.style.display = 'none';
+                      }}
                     />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
+                      <span className="text-purple-600 font-semibold text-lg">
+                        {user.display_name?.charAt(0).toUpperCase() || 'U'}
+                      </span>
+                    </div>
                   )}
                   <div>
                     <p className="font-semibold text-gray-900">
@@ -147,14 +155,21 @@ export default function DashboardPage() {
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                      {creator.avatar_url && (
-                        <Image
+                      {creator.avatar_url ? (
+                        <img
                           src={creator.avatar_url}
                           alt={creator.display_name}
-                          width={64}
-                          height={64}
-                          className="rounded-full"
+                          className="w-16 h-16 rounded-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                          }}
                         />
+                      ) : (
+                        <div className="w-16 h-16 rounded-full bg-pink-100 flex items-center justify-center">
+                          <span className="text-pink-600 font-semibold text-2xl">
+                            {creator.display_name?.charAt(0).toUpperCase() || 'C'}
+                          </span>
+                        </div>
                       )}
                       <div>
                         <h3 className="text-xl font-semibold text-gray-900">
