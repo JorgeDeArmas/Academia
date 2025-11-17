@@ -73,7 +73,10 @@ export async function GET(request: NextRequest) {
     // TikTok API requires 'fields' parameter to specify which fields to return
     // Request additional fields for profile avatar and bio
     const userInfoUrl = new URL(userInfoEndpoint);
-    userInfoUrl.searchParams.append("fields", "open_id,display_name,avatar_url,avatar_large_url,username,bio_description,profile_deep_link");
+    userInfoUrl.searchParams.append(
+      "fields",
+      "open_id,display_name,avatar_url,avatar_large_url,username,bio_description,profile_deep_link"
+    );
 
     const userResponse = await fetch(userInfoUrl.toString(), {
       method: "GET",
@@ -107,7 +110,10 @@ export async function GET(request: NextRequest) {
     }
 
     // Log what TikTok actually returned
-    console.log("TikTok user data received:", JSON.stringify(tiktokUser, null, 2));
+    console.log(
+      "TikTok user data received:",
+      JSON.stringify(tiktokUser, null, 2)
+    );
     console.log("Avatar URL:", tiktokUser.avatar_url);
     console.log("Avatar Large URL:", tiktokUser.avatar_large_url);
 
@@ -138,7 +144,10 @@ export async function GET(request: NextRequest) {
         .update({
           display_name: tiktokUser.display_name || existingUser.display_name,
           username: tiktokUser.username || existingUser.username,
-          avatar_url: tiktokUser.avatar_url || tiktokUser.avatar_large_url || existingUser.avatar_url,
+          avatar_url:
+            tiktokUser.avatar_url ||
+            tiktokUser.avatar_large_url ||
+            existingUser.avatar_url,
           updated_at: new Date().toISOString(),
         })
         .eq("tiktok_user_id", tiktokUser.open_id)
@@ -165,12 +174,16 @@ export async function GET(request: NextRequest) {
         display_name: tiktokUser.display_name || "TikTok User",
         username:
           tiktokUser.username || `user_${tiktokUser.open_id.substring(0, 8)}`,
-        avatar_url: tiktokUser.avatar_url || tiktokUser.avatar_large_url || null,
+        avatar_url:
+          tiktokUser.avatar_url || tiktokUser.avatar_large_url || null,
         language_preference: "es",
       };
-      
-      console.log("Inserting user with data:", JSON.stringify(userDataToInsert, null, 2));
-      
+
+      console.log(
+        "Inserting user with data:",
+        JSON.stringify(userDataToInsert, null, 2)
+      );
+
       const { data: newUser, error: insertError } = await supabaseAdmin
         .from("users")
         .insert(userDataToInsert)
@@ -190,15 +203,23 @@ export async function GET(request: NextRequest) {
       }
 
       userId = newUser.id;
-      console.log("Successfully created user:", JSON.stringify(newUser, null, 2));
+      console.log(
+        "Successfully created user:",
+        JSON.stringify(newUser, null, 2)
+      );
     }
 
     // Fetch user's videos from TikTok
     // Only fetch if we have video.list scope
     try {
-      const videoListUrl = new URL("https://open.tiktokapis.com/v2/video/list/");
-      videoListUrl.searchParams.append("fields", "id,create_time,cover_image_url,share_url,video_description,duration,height,width,title,embed_html,embed_link,like_count,comment_count,share_count,view_count");
-      
+      const videoListUrl = new URL(
+        "https://open.tiktokapis.com/v2/video/list/"
+      );
+      videoListUrl.searchParams.append(
+        "fields",
+        "id,create_time,cover_image_url,share_url,video_description,duration,height,width,title,embed_html,embed_link,like_count,comment_count,share_count,view_count"
+      );
+
       const videoResponse = await fetch(videoListUrl.toString(), {
         method: "POST",
         headers: {
@@ -228,7 +249,9 @@ export async function GET(request: NextRequest) {
             like_count: video.like_count || 0,
             comment_count: video.comment_count || 0,
             share_count: video.share_count || 0,
-            created_at: video.create_time ? new Date(video.create_time * 1000).toISOString() : new Date().toISOString(),
+            created_at: video.create_time
+              ? new Date(video.create_time * 1000).toISOString()
+              : new Date().toISOString(),
           }));
 
           // Upsert videos (insert or update if exists)
@@ -243,7 +266,9 @@ export async function GET(request: NextRequest) {
             console.error("Error storing videos:", videoInsertError);
             // Don't fail the OAuth flow if video storage fails
           } else {
-            console.log(`Successfully stored ${videos.length} videos for user ${userId}`);
+            console.log(
+              `Successfully stored ${videos.length} videos for user ${userId}`
+            );
           }
         }
       } else {

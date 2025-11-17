@@ -6,6 +6,8 @@ import Image from "next/image";
 import { SimilarCreatorWithDetails, VideoWithProducts } from "@/types";
 import { formatCurrency } from "@/lib/translators/productAdapter";
 import { calculateEngagementScore } from "@/lib/utils/culturalFit";
+import { TikTokEmbed } from "@/components/TikTokEmbed";
+import { TikTokProfileEmbed } from "@/components/TikTokProfileEmbed";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -87,13 +89,13 @@ export default function DashboardPage() {
                       className="w-10 h-10 rounded-full object-cover"
                       onError={(e) => {
                         // Hide image on error
-                        e.currentTarget.style.display = 'none';
+                        e.currentTarget.style.display = "none";
                       }}
                     />
                   ) : (
                     <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
                       <span className="text-purple-600 font-semibold text-lg">
-                        {user.display_name?.charAt(0).toUpperCase() || 'U'}
+                        {user.display_name?.charAt(0).toUpperCase() || "U"}
                       </span>
                     </div>
                   )}
@@ -161,13 +163,14 @@ export default function DashboardPage() {
                           alt={creator.display_name}
                           className="w-16 h-16 rounded-full object-cover"
                           onError={(e) => {
-                            e.currentTarget.style.display = 'none';
+                            e.currentTarget.style.display = "none";
                           }}
                         />
                       ) : (
                         <div className="w-16 h-16 rounded-full bg-pink-100 flex items-center justify-center">
                           <span className="text-pink-600 font-semibold text-2xl">
-                            {creator.display_name?.charAt(0).toUpperCase() || 'C'}
+                            {creator.display_name?.charAt(0).toUpperCase() ||
+                              "C"}
                           </span>
                         </div>
                       )}
@@ -183,6 +186,18 @@ export default function DashboardPage() {
                           <span className="text-sm text-gray-500">
                             {creator.similarity_score}% similar
                           </span>
+                          <a
+                            href={`https://www.tiktok.com/@${creator.username}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                            className="text-sm text-purple-600 hover:text-purple-700 font-medium flex items-center gap-1"
+                          >
+                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                            </svg>
+                            Ver perfil
+                          </a>
                         </div>
                       </div>
                     </div>
@@ -228,6 +243,7 @@ export default function DashboardPage() {
 
 function VideoCard({ video }: { video: any }) {
   const [showProducts, setShowProducts] = useState(false);
+  const [showEmbed, setShowEmbed] = useState(false);
   const engagementScore = calculateEngagementScore(
     video.view_count,
     video.like_count,
@@ -246,19 +262,38 @@ function VideoCard({ video }: { video: any }) {
   };
 
   return (
-    <div className="bg-white rounded-lg overflow-hidden border border-gray-200">
-      {/* Video Thumbnail */}
-      <div className="relative aspect-[9/16] bg-gray-200">
-        <Image
-          src={video.thumbnail_url}
-          alt={video.title}
-          fill
-          className="object-cover"
-        />
-        <div className="absolute bottom-2 right-2 bg-black/70 text-white px-2 py-1 rounded text-sm">
-          {formatNumber(video.view_count)} views
+    <>
+      <div className="bg-white rounded-lg overflow-hidden border border-gray-200">
+        {/* Video Thumbnail */}
+        <div 
+          className="relative aspect-[9/16] bg-gray-200 cursor-pointer group"
+          onClick={() => setShowEmbed(true)}
+        >
+          {video.cover_image_url ? (
+            <img
+              src={video.cover_image_url}
+              alt={video.title || "TikTok video"}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-100 to-pink-100">
+              <svg className="w-16 h-16 text-purple-400" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+              </svg>
+            </div>
+          )}
+          {/* Play button overlay */}
+          <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition flex items-center justify-center">
+            <div className="bg-white rounded-full p-4 group-hover:scale-110 transition">
+              <svg className="w-8 h-8 text-purple-600" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            </div>
+          </div>
+          <div className="absolute bottom-2 right-2 bg-black/70 text-white px-2 py-1 rounded text-sm">
+            {formatNumber(video.view_count)} views
+          </div>
         </div>
-      </div>
 
       {/* Video Info */}
       <div className="p-4">
@@ -329,6 +364,51 @@ function VideoCard({ video }: { video: any }) {
         )}
       </div>
     </div>
+
+    {/* TikTok Embed Modal */}
+    {showEmbed && (
+      <div 
+        className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
+        onClick={() => setShowEmbed(false)}
+      >
+        <div 
+          className="relative max-w-2xl w-full bg-white rounded-2xl overflow-hidden"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Close button */}
+          <button
+            onClick={() => setShowEmbed(false)}
+            className="absolute top-4 right-4 z-10 bg-white/90 hover:bg-white rounded-full p-2 shadow-lg transition"
+          >
+            <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+
+          {/* TikTok Embed */}
+          <div className="max-h-[80vh] overflow-y-auto">
+            {video.video_url ? (
+              <TikTokEmbed 
+                videoUrl={video.video_url} 
+                videoId={video.video_id}
+                className="mx-auto"
+              />
+            ) : (
+              <div className="p-8 text-center">
+                <p className="text-gray-500">URL del video no disponible</p>
+                <button
+                  onClick={() => setShowEmbed(false)}
+                  className="mt-4 px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+                >
+                  Cerrar
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    )}
+  </>
   );
 }
 

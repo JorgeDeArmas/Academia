@@ -19,10 +19,13 @@ export async function GET(request: NextRequest) {
       .single();
 
     if (userError || !user) {
-      return NextResponse.json({ 
-        error: "User not found",
-        details: userError 
-      }, { status: 404 });
+      return NextResponse.json(
+        {
+          error: "User not found",
+          details: userError,
+        },
+        { status: 404 }
+      );
     }
 
     // Fetch user's videos
@@ -32,13 +35,16 @@ export async function GET(request: NextRequest) {
       .eq("user_id", session.userId)
       .order("created_at", { ascending: false });
 
-    return NextResponse.json({
-      session,
-      user,
-      videosCount: videos?.length || 0,
-      videos: videos || [],
-      videosError: videosError?.message || null,
-    }, { status: 200 });
+    return NextResponse.json(
+      {
+        session,
+        user,
+        videosCount: videos?.length || 0,
+        videos: videos || [],
+        videosError: videosError?.message || null,
+      },
+      { status: 200 }
+    );
   } catch (error: any) {
     return NextResponse.json(
       { error: "Internal server error", details: error.message },
