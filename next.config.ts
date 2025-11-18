@@ -4,6 +4,7 @@ import withPWA from "next-pwa";
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   turbopack: {},
+  allowedDevOrigins: ["subsocial-justice-detersively.ngrok-free.dev"],
   images: {
     remotePatterns: [
       {

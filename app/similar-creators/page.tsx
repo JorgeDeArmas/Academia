@@ -77,9 +77,9 @@ export default function SimilarCreatorsPage() {
 
   if (loading && creators.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-pink-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-16 h-16 border-4 border-[#00F2EA] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-600 font-medium">
             Cargando creadores similares...
           </p>
@@ -89,7 +89,7 @@ export default function SimilarCreatorsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50">
+    <div className="min-h-screen bg-white">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 py-4">
@@ -109,7 +109,7 @@ export default function SimilarCreatorsPage() {
             {/* Back to Dashboard */}
             <button
               onClick={() => router.push("/dashboard")}
-              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg hover:from-pink-600 hover:to-purple-700 transition-all shadow-md"
+              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#00F2EA] to-[#00D9D0] text-gray-900 rounded-lg hover:from-[#00D9D0] hover:to-[#00F2EA] font-semibold transition-all shadow-md"
             >
               <svg
                 className="w-5 h-5"

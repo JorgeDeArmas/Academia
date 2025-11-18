@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import TikTokCreatorProfile from "./TikTokCreatorProfile";
 
 interface CreatorCardProps {
@@ -18,22 +18,12 @@ interface CreatorCardProps {
   ec_score: number;
 }
 
-const formatNumber = (num: number): string => {
-  if (num >= 1000000) {
-    return `${(num / 1000000).toFixed(1)}M`;
-  }
-  if (num >= 1000) {
-    return `${(num / 1000).toFixed(1)}K`;
-  }
-  return num.toString();
-};
-
 const formatCurrency = (amount: number): string => {
   if (amount >= 1000000) {
-    return `$${(amount / 1000000).toFixed(2)}M`;
+    return `$${(amount / 1000000).toFixed(1)}M`;
   }
   if (amount >= 1000) {
-    return `$${(amount / 1000).toFixed(2)}K`;
+    return `$${(amount / 1000).toFixed(1)}K`;
   }
   return `$${amount.toFixed(2)}`;
 };
@@ -41,88 +31,77 @@ const formatCurrency = (amount: number): string => {
 export default function CreatorCard({
   user_id,
   unique_id,
-  nickname,
-  avatar_url,
-  signature,
-  region,
   category,
-  total_followers_cnt,
-  total_video_cnt,
   total_sale_gmv_30d_amt,
   interaction_rate,
   ec_score,
 }: CreatorCardProps) {
-  return (
-    <Link href={`/creators/${user_id}`}>
-      <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow overflow-hidden border border-gray-100 cursor-pointer">
-        {/* TikTok Creator Profile Embed */}
-        <div className="w-full">
-          <TikTokCreatorProfile username={unique_id} />
-        </div>
+  const router = useRouter();
 
-        {/* EchoTik Metrics Overlay */}
-        <div className="p-4 bg-gradient-to-br from-purple-50 to-pink-50">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs bg-purple-100 text-purple-700 px-3 py-1 rounded-full font-medium">
+  const handleMetricsClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    router.push(`/creators/${user_id}`);
+  };
+
+  // Dynamic color based on engagement rate
+  const getEngagementColor = (rate: number) => {
+    const percentage = rate * 100;
+    if (percentage < 2) return "text-red-600";
+    if (percentage >= 2 && percentage <= 5) return "text-orange-500";
+    return "text-green-600";
+  };
+
+  // Dynamic color based on EC score
+  const getScoreColor = (score: number) => {
+    if (score < 2) return "text-red-600";
+    if (score >= 2 && score <= 5) return "text-orange-500";
+    return "text-green-600";
+  };
+
+  return (
+    <div className="group space-y-2">
+      {/* TikTok Creator Profile Embed - Display as-is */}
+      <div className="w-full">
+        <TikTokCreatorProfile username={unique_id} />
+      </div>
+
+      {/* Metrics Bar - Separate card matching TikTok embed style */}
+      <div 
+        onClick={handleMetricsClick}
+        className="bg-white border border-gray-200 rounded-xl px-4 py-3.5 cursor-pointer hover:bg-gray-50 transition-all shadow-sm"
+      >
+        <div className="flex items-center justify-between gap-3">
+          {/* Category Badge */}
+          <div className="flex-shrink-0">
+            <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold bg-[#FF0050] text-white shadow-sm">
               {category}
             </span>
-            <div className="bg-gradient-to-r from-yellow-400 to-orange-400 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
-              EC Score: {ec_score.toFixed(1)}
-            </div>
           </div>
 
-          {/* Stats Grid */}
-          <div className="grid grid-cols-2 gap-3">
+          {/* Metrics Row */}
+          <div className="flex items-center gap-4 flex-1 justify-end">
             {/* GMV 30d */}
-            <div className="bg-white/80 backdrop-blur rounded-xl p-3 shadow-sm">
-              <div className="flex items-center gap-2 text-green-600 mb-1">
-                <svg
-                  className="w-4 h-4"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z" />
-                  <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                <span className="text-xs font-medium">GMV 30d</span>
-              </div>
-              <p className="text-lg font-bold text-gray-900">
-                {formatCurrency(total_sale_gmv_30d_amt)}
-              </p>
+            <div className="text-center">
+              <div className="text-[9px] text-gray-400 font-semibold uppercase tracking-wider mb-0.5">GMV 30D</div>
+              <div className="text-sm font-bold text-emerald-600">{formatCurrency(total_sale_gmv_30d_amt)}</div>
             </div>
 
             {/* Engagement */}
-            <div className="bg-white/80 backdrop-blur rounded-xl p-3 shadow-sm">
-              <div className="flex items-center gap-2 text-pink-600 mb-1">
-                <svg
-                  className="w-4 h-4"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                <span className="text-xs font-medium">Engagement</span>
-              </div>
-              <p className="text-lg font-bold text-gray-900">
-                {(interaction_rate * 100).toFixed(1)}%
-              </p>
+            <div className="text-center">
+              <div className="text-[9px] text-gray-400 font-semibold uppercase tracking-wider mb-0.5">ENGAGEMENT</div>
+              <div className={`text-sm font-bold ${getEngagementColor(interaction_rate)}`}>{(interaction_rate * 100).toFixed(1)}%</div>
             </div>
-          </div>
 
-          {/* Region indicator */}
-          <div className="mt-3 text-center">
-            <span className="text-xs text-gray-500 font-medium">{region}</span>
+            {/* EC Score */}
+            <div className="text-center">
+              <div className="text-[9px] text-gray-400 font-semibold uppercase tracking-wider mb-0.5">SCORE</div>
+              <div className={`text-sm font-bold ${getScoreColor(ec_score)}`}>
+                {ec_score.toFixed(1)}
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </Link>
+    </div>
   );
 }
