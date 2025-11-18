@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
+import { I18nProvider } from "@/lib/i18n";
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -36,7 +37,7 @@ export default function RootLayout({
       <body
         className={`${jakarta.className} bg-surface-light text-slate-900 antialiased`}
       >
-        {children}
+        <I18nProvider>{children}</I18nProvider>
       </body>
     </html>
   );

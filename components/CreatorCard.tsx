@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import TikTokCreatorProfile from "./TikTokCreatorProfile";
+import { useI18n } from "@/lib/i18n";
 
 interface CreatorCardProps {
   user_id: string;
@@ -37,6 +38,7 @@ export default function CreatorCard({
   ec_score,
 }: CreatorCardProps) {
   const router = useRouter();
+  const { t } = useI18n();
 
   const handleMetricsClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -66,7 +68,7 @@ export default function CreatorCard({
       </div>
 
       {/* Metrics Bar - Separate card matching TikTok embed style */}
-      <div 
+      <div
         onClick={handleMetricsClick}
         className="bg-white border border-gray-200 rounded-xl px-4 py-3.5 cursor-pointer hover:bg-gray-50 transition-all shadow-sm"
       >
@@ -82,19 +84,33 @@ export default function CreatorCard({
           <div className="flex items-center gap-4 flex-1 justify-end">
             {/* GMV 30d */}
             <div className="text-center">
-              <div className="text-[9px] text-gray-400 font-semibold uppercase tracking-wider mb-0.5">GMV 30D</div>
-              <div className="text-sm font-bold text-emerald-600">{formatCurrency(total_sale_gmv_30d_amt)}</div>
+              <div className="text-[9px] text-gray-400 font-semibold uppercase tracking-wider mb-0.5">
+                {t("metrics.gmv30d")}
+              </div>
+              <div className="text-sm font-bold text-emerald-600">
+                {formatCurrency(total_sale_gmv_30d_amt)}
+              </div>
             </div>
 
             {/* Engagement */}
             <div className="text-center">
-              <div className="text-[9px] text-gray-400 font-semibold uppercase tracking-wider mb-0.5">ENGAGEMENT</div>
-              <div className={`text-sm font-bold ${getEngagementColor(interaction_rate)}`}>{(interaction_rate * 100).toFixed(1)}%</div>
+              <div className="text-[9px] text-gray-400 font-semibold uppercase tracking-wider mb-0.5">
+                {t("metrics.engagement")}
+              </div>
+              <div
+                className={`text-sm font-bold ${getEngagementColor(
+                  interaction_rate
+                )}`}
+              >
+                {(interaction_rate * 100).toFixed(1)}%
+              </div>
             </div>
 
             {/* EC Score */}
             <div className="text-center">
-              <div className="text-[9px] text-gray-400 font-semibold uppercase tracking-wider mb-0.5">SCORE</div>
+              <div className="text-[9px] text-gray-400 font-semibold uppercase tracking-wider mb-0.5">
+                {t("metrics.score")}
+              </div>
               <div className={`text-sm font-bold ${getScoreColor(ec_score)}`}>
                 {ec_score.toFixed(1)}
               </div>

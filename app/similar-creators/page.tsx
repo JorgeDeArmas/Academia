@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import CreatorCard from "@/components/CreatorCard";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { useI18n } from "@/lib/i18n";
 
 interface Creator {
   id: string;
@@ -22,6 +24,7 @@ interface Creator {
 
 export default function SimilarCreatorsPage() {
   const router = useRouter();
+  const { t } = useI18n();
   const [creators, setCreators] = useState<Creator[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -55,9 +58,7 @@ export default function SimilarCreatorsPage() {
       }
     } catch (err) {
       console.error("Error fetching creators:", err);
-      setError(
-        err instanceof Error ? err.message : "Error al cargar creadores"
-      );
+      setError(err instanceof Error ? err.message : t("error.loadingCreators"));
     } finally {
       setLoading(false);
     }
@@ -81,7 +82,7 @@ export default function SimilarCreatorsPage() {
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-[#00F2EA] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-600 font-medium">
-            Cargando creadores similares...
+            {t("similarCreators.loading")}
           </p>
         </div>
       </div>
@@ -96,36 +97,41 @@ export default function SimilarCreatorsPage() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">
-                Creadores Similares
+                {t("similarCreators.title")}
               </h1>
               <p className="text-sm text-gray-600 mt-1">
                 {category} • ES • US
                 {creators.length > 0 && (
-                  <span className="ml-2">({creators.length} creadores)</span>
+                  <span className="ml-2">
+                    ({creators.length} {t("similarCreators.creators")})
+                  </span>
                 )}
               </p>
             </div>
 
-            {/* Back to Dashboard */}
-            <button
-              onClick={() => router.push("/dashboard")}
-              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#00F2EA] to-[#00D9D0] text-gray-900 rounded-lg hover:from-[#00D9D0] hover:to-[#00F2EA] font-semibold transition-all shadow-md"
-            >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+            {/* Language Switcher & Back to Dashboard */}
+            <div className="flex items-center gap-3">
+              <LanguageSwitcher />
+              <button
+                onClick={() => router.push("/dashboard")}
+                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#00F2EA] to-[#00D9D0] text-gray-900 rounded-xl hover:from-[#00D9D0] hover:to-[#00F2EA] font-semibold transition-all shadow-md"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M10 19l-7-7m0 0l7-7m-7 7h18"
-                />
-              </svg>
-              Dashboard
-            </button>
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                  />
+                </svg>
+                {t("nav.backToDashboard")}
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -133,7 +139,7 @@ export default function SimilarCreatorsPage() {
       {/* Error Message */}
       {error && (
         <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <div className="bg-red-50 border border-red-200 rounded-xl p-4">
             <div className="flex items-center gap-2">
               <svg
                 className="w-5 h-5 text-red-600"
@@ -170,10 +176,10 @@ export default function SimilarCreatorsPage() {
               />
             </svg>
             <h2 className="text-xl font-semibold text-gray-700 mb-2">
-              No se encontraron creadores
+              {t("similarCreators.noCreators")}
             </h2>
             <p className="text-gray-500">
-              No hay creadores disponibles en este momento
+              {t("similarCreators.noCreatorsDesc")}
             </p>
           </div>
         ) : (
@@ -204,7 +210,7 @@ export default function SimilarCreatorsPage() {
                 <button
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1 || loading}
-                  className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors"
+                  className="px-4 py-2 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors"
                 >
                   <svg
                     className="w-5 h-5 text-gray-600"
@@ -221,14 +227,14 @@ export default function SimilarCreatorsPage() {
                   </svg>
                 </button>
 
-                <span className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 font-medium">
-                  Página {currentPage} de {totalPages}
+                <span className="px-4 py-2 bg-white border border-gray-300 rounded-xl text-gray-700 font-medium">
+                  {t("common.page")} {currentPage} {t("common.of")} {totalPages}
                 </span>
 
                 <button
                   onClick={() => handlePageChange(currentPage + 1)}
                   disabled={currentPage >= totalPages || loading}
-                  className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors"
+                  className="px-4 py-2 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors"
                 >
                   <svg
                     className="w-5 h-5 text-gray-600"
@@ -252,4 +258,3 @@ export default function SimilarCreatorsPage() {
     </div>
   );
 }
-
