@@ -125,13 +125,32 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Fetch top videos for each creator to display in the card
+    const creatorsWithVideos = await Promise.all(
+      (creators || []).map(async (creator) => {
+        // Try to fetch videos linked to this creator
+        // We assume creator_videos table has creator_id FK pointing to echotik_creators.id
+        const { data: videos } = await supabaseAdmin
+          .from("creator_videos")
+          .select("*")
+          .eq("creator_id", creator.id)
+          .order("view_count", { ascending: false })
+          .limit(3);
+
+        return {
+          ...creator,
+          top_videos: videos || [],
+        };
+      })
+    );
+
     // Calculate pagination metadata
     const totalPages = count ? Math.ceil(count / pageSize) : 0;
     const hasMore = pageNum < totalPages;
 
     return NextResponse.json({
       success: true,
-      creators: creators || [],
+      creators: creatorsWithVideos,
       pagination: {
         page: pageNum,
         pageSize,

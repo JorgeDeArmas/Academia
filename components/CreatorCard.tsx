@@ -16,7 +16,7 @@ interface CreatorCardProps {
   total_video_cnt: number;
   total_sale_gmv_30d_amt: number;
   interaction_rate: number;
-  ec_score: number;
+  ec_score?: number;
 }
 
 const formatCurrency = (amount: number): string => {
@@ -26,7 +26,7 @@ const formatCurrency = (amount: number): string => {
   if (amount >= 1000) {
     return `$${(amount / 1000).toFixed(1)}K`;
   }
-  return `$${amount.toFixed(2)}`;
+  return `$${Math.round(amount)}`;
 };
 
 export default function CreatorCard({
@@ -35,13 +35,11 @@ export default function CreatorCard({
   category,
   total_sale_gmv_30d_amt,
   interaction_rate,
-  ec_score,
 }: CreatorCardProps) {
   const router = useRouter();
   const { t } = useI18n();
 
-  const handleMetricsClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleCardClick = () => {
     router.push(`/creators/${user_id}`);
   };
 
@@ -53,68 +51,50 @@ export default function CreatorCard({
     return "text-green-600";
   };
 
-  // Dynamic color based on EC score
-  const getScoreColor = (score: number) => {
-    if (score < 2) return "text-red-600";
-    if (score >= 2 && score <= 5) return "text-orange-500";
-    return "text-green-600";
-  };
-
   return (
-    <div className="group space-y-2">
-      {/* TikTok Creator Profile Embed - Display as-is */}
+    <div className="group cursor-pointer w-full max-w-[340px] mx-auto relative">
+      {/* TikTok Creator Profile Embed */}
       <div className="w-full">
-        <TikTokCreatorProfile username={unique_id} />
+        <TikTokCreatorProfile username={unique_id} maxWidth="100%" />
       </div>
 
-      {/* Metrics Bar - Separate card matching TikTok embed style */}
+      {/* Overlay Metrics - Top Right */}
       <div
-        onClick={handleMetricsClick}
-        className="bg-white border border-gray-200 rounded-xl px-4 py-3.5 cursor-pointer hover:bg-gray-50 transition-all shadow-sm"
+        className="absolute top-5 right-5 flex flex-col items-end z-10"
+        onClick={(e) => {
+          e.stopPropagation();
+          handleCardClick();
+        }}
       >
-        <div className="flex items-center justify-between gap-3">
-          {/* Category Badge */}
-          <div className="flex-shrink-0">
-            <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold bg-[#FF0050] text-white shadow-sm">
-              {category}
+        {/* Category Badge */}
+        <span className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold bg-[#FF0050] text-white shadow-sm mb-7 mt-1">
+          {category}
+        </span>
+
+        {/* Metrics Container */}
+        <div className="flex flex-col items-end gap-2">
+          {/* GMV 30D */}
+          <div className="flex flex-col items-end">
+            <span className="text-base font-bold text-gray-900 leading-none">
+              {formatCurrency(Number(total_sale_gmv_30d_amt))}
+            </span>
+            <span className="text-[10px] text-gray-500 font-medium leading-tight mt-2">
+              GMV 30d
             </span>
           </div>
 
-          {/* Metrics Row */}
-          <div className="flex items-center gap-4 flex-1 justify-end">
-            {/* GMV 30d */}
-            <div className="text-center">
-              <div className="text-[9px] text-gray-400 font-semibold uppercase tracking-wider mb-0.5">
-                {t("metrics.gmv30d")}
-              </div>
-              <div className="text-sm font-bold text-emerald-600">
-                {formatCurrency(total_sale_gmv_30d_amt)}
-              </div>
-            </div>
-
-            {/* Engagement */}
-            <div className="text-center">
-              <div className="text-[9px] text-gray-400 font-semibold uppercase tracking-wider mb-0.5">
-                {t("metrics.engagement")}
-              </div>
-              <div
-                className={`text-sm font-bold ${getEngagementColor(
-                  interaction_rate
-                )}`}
-              >
-                {(interaction_rate * 100).toFixed(1)}%
-              </div>
-            </div>
-
-            {/* EC Score */}
-            <div className="text-center">
-              <div className="text-[9px] text-gray-400 font-semibold uppercase tracking-wider mb-0.5">
-                {t("metrics.score")}
-              </div>
-              <div className={`text-sm font-bold ${getScoreColor(ec_score)}`}>
-                {ec_score.toFixed(1)}
-              </div>
-            </div>
+          {/* Engagement */}
+          <div className="flex flex-col items-end">
+            <span
+              className={`text-base font-bold leading-none ${getEngagementColor(
+                interaction_rate
+              )}`}
+            >
+              {Math.round(interaction_rate * 100)}%
+            </span>
+            <span className="text-[10px] text-gray-500 font-medium leading-tight mt-0.5">
+              Engagement
+            </span>
           </div>
         </div>
       </div>

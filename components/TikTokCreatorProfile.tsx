@@ -1,27 +1,31 @@
-'use client';
+"use client";
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
 interface TikTokCreatorProfileProps {
   username: string; // TikTok unique_id (e.g., "scout2015")
   className?: string;
+  maxWidth?: string;
 }
 
-export default function TikTokCreatorProfile({ 
-  username, 
-  className = '' 
+export default function TikTokCreatorProfile({
+  username,
+  className = "",
+  maxWidth = "480px",
 }: TikTokCreatorProfileProps) {
   const embedRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Load TikTok embed script if not already loaded
-    const script = document.createElement('script');
-    script.src = 'https://www.tiktok.com/embed.js';
+    const script = document.createElement("script");
+    script.src = "https://www.tiktok.com/embed.js";
     script.async = true;
-    
+
     // Check if script already exists
-    const existingScript = document.querySelector('script[src="https://www.tiktok.com/embed.js"]');
-    
+    const existingScript = document.querySelector(
+      'script[src="https://www.tiktok.com/embed.js"]'
+    );
+
     if (!existingScript) {
       document.body.appendChild(script);
     } else {
@@ -43,7 +47,7 @@ export default function TikTokCreatorProfile({
         cite={`https://www.tiktok.com/@${username}`}
         data-unique-id={username}
         data-embed-type="creator"
-        style={{ maxWidth: '720px', minWidth: '288px' }}
+        style={{ maxWidth, minWidth: "288px" }}
         data-embed-from="oembed"
       >
         <section>
